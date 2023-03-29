@@ -13,6 +13,10 @@ class InterfaceGraficaJogador:
         self.lado_borda_frame_principal = int(ALTURA*0.85)
         self.lado_frame_principal = int(self.lado_borda_frame_principal*0.98)
         self.lado_celula = self.lado_frame_principal//10 - int(0.0030*self.lado_frame_principal)
+        
+        self.matriz_pecas = []
+        self.matriz_pecas_esquerda = []
+        self.matriz_pecas_direita = []
 
         self.desenhar_frame_principal()
         self.desenhar_celulas()
@@ -41,6 +45,7 @@ class InterfaceGraficaJogador:
     
     def desenhar_celulas(self):
         for i in range(10):
+            linha_matriz = []
             for j in range(10):
                 
                 if (i==4 or i==5) and (j==2 or j==3 or j==6 or j==7):
@@ -51,13 +56,15 @@ class InterfaceGraficaJogador:
                 
                 label_posicao = Label(self.frame_principal,
                                       bg=cor)
-
                 label_posicao.place(x=j*self.lado_frame_principal//10 + self.lado_frame_principal//20,
                                     y=i*self.lado_frame_principal//10 + self.lado_frame_principal//20,
                                     width=self.lado_celula, 
                                     height=self.lado_celula,
                                     anchor="center"
                                     )
+                linha_matriz.append(label_posicao)
+                label_posicao.bind("<Button-1>", lambda event, linha=i, coluna=j, objeto=0: self.click(event, linha, coluna, objeto))
+            self.matriz_pecas.append(linha_matriz)
                 
     def desenhar_pecas_esquerda(self):
         self.borda_frame_pecas_esquerda = Frame(self.janela_principal,
@@ -77,6 +84,7 @@ class InterfaceGraficaJogador:
                                     y = ALTURA//2 + ALTURA//20)
         
         for i in range(6):
+            linha = []
             for j in range(2):
                 label_posicao = Label(self.frame_pecas_esquerda,
                                       bg="white")
@@ -86,6 +94,10 @@ class InterfaceGraficaJogador:
                                     height=self.lado_celula,
                                     anchor="nw"
                                     )
+                linha.append(label_posicao)
+                label_posicao.bind("<Button-1>", lambda event, linha=i, coluna=j, objeto=1: self.click(event, linha, coluna, objeto))
+
+            self.matriz_pecas_esquerda.append(linha)
     
     def desenhar_pecas_direita(self):
         self.borda_frame_pecas_direita = Frame(self.janela_principal,
@@ -105,6 +117,7 @@ class InterfaceGraficaJogador:
                                     y = ALTURA//2 + ALTURA//20)
         
         for i in range(6):
+            linha = []
             for j in range(2):
                 label_posicao = Label(self.frame_pecas_direita,
                                       bg="white")
@@ -114,6 +127,9 @@ class InterfaceGraficaJogador:
                                     height=self.lado_celula,
                                     anchor="nw"
                                     )
+                linha.append(label_posicao)
+                label_posicao.bind("<Button-1>", lambda event, linha=i, coluna=j, objeto=2: self.click(event, linha, coluna, objeto))
+            self.matriz_pecas_direita.append(linha)
     
     def desenhar_mensagem(self):
         mensagem = "Seu turno!"
@@ -137,5 +153,37 @@ class InterfaceGraficaJogador:
                                  x = 0,
                                  y = 0
                                  )
+
+    def click(self, event, i, j, objeto):
+        if objeto == 0:
+            label = self.matriz_pecas[i][j]
+            if label.cget("bg") != "red":
+                label.config(bg="red")
+            else:
+                if (i==4 or i==5) and (j==2 or j==3 or j==6 or j==7):
+                    label.config(bg="blue")
+                else:
+                    label.config(bg="green")
+        
+        if objeto == 1:
+            label_esquerda = self.matriz_pecas_esquerda[i][0]
+            label_direita = self.matriz_pecas_esquerda[i][1]
+            if label_esquerda.cget("bg") != "red":
+                label_esquerda.config(bg="red")
+                label_direita.config(bg="red")
+            else:
+                label_esquerda.config(bg="white")
+                label_direita.config(bg="white")
+                
+        if objeto == 2:
+            label_esquerda = self.matriz_pecas_direita[i][0]
+            label_direita = self.matriz_pecas_direita[i][1]
+            if label_esquerda.cget("bg") != "red":
+                label_esquerda.config(bg="red")
+                label_direita.config(bg="red")
+            else:
+                label_esquerda.config(bg="white")
+                label_direita.config(bg="white")
+
 
 InterfaceGraficaJogador()

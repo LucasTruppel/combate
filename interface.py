@@ -14,7 +14,15 @@ class InterfaceGraficaJogador:
         self.lado_frame_principal = int(self.lado_borda_frame_principal*0.98)
         self.lado_celula = self.lado_frame_principal//10 - int(0.0030*self.lado_frame_principal)
 
-
+        self.desenhar_frame_principal()
+        self.desenhar_celulas()
+        self.desenhar_pecas_direita()
+        self.desenhar_pecas_esquerda()
+        self.desenhar_mensagem()
+        
+        self.janela_principal.mainloop()
+        
+    def desenhar_frame_principal(self):
         self.borda_frame_principal = Frame(self.janela_principal,
                                            bg="black")
         self.borda_frame_principal.place(anchor="center",
@@ -30,7 +38,8 @@ class InterfaceGraficaJogador:
                                    height=self.lado_frame_principal,
                                    x = LARGURA//2,
                                    y = ALTURA//2 + ALTURA//20)
-                
+    
+    def desenhar_celulas(self):
         for i in range(10):
             for j in range(10):
                 
@@ -49,50 +58,22 @@ class InterfaceGraficaJogador:
                                     height=self.lado_celula,
                                     anchor="center"
                                     )
-        
-        self.borda_frame_pecas_direita = Frame(self.janela_principal,
+                
+    def desenhar_pecas_esquerda(self):
+        self.borda_frame_pecas_esquerda = Frame(self.janela_principal,
                                                bg="black")
-        self.borda_frame_pecas_direita.place(anchor="e", 
+        self.borda_frame_pecas_esquerda.place(anchor="e", 
                                              width=2*self.lado_celula + int(0.0125*self.lado_borda_frame_principal), 
                                              height=int(0.6*self.lado_borda_frame_principal + 0.0125*self.lado_borda_frame_principal),
                                              x = LARGURA//2 - self.lado_borda_frame_principal//2,
                                              y = ALTURA//2 + ALTURA//20)
         
-        self.frame_pecas_direita = Frame(self.janela_principal,
+        self.frame_pecas_esquerda = Frame(self.janela_principal,
                                       bg="black")
-        self.frame_pecas_direita.place(anchor="e",
+        self.frame_pecas_esquerda.place(anchor="e",
                                     width=2*self.lado_celula, 
                                     height=int(0.6*self.lado_frame_principal),
                                     x = LARGURA//2 - self.lado_borda_frame_principal//2 - int(0.02*self.lado_celula),
-                                    y = ALTURA//2 + ALTURA//20)
-        
-        for i in range(6):
-            for j in range(2):
-                label_posicao = Label(self.frame_pecas_direita,
-                                      bg="white")
-                label_posicao.place(x=j*self.lado_celula,
-                                    y=i*self.lado_frame_principal//10,
-                                    width=self.lado_celula, 
-                                    height=self.lado_celula,
-                                    anchor="nw"
-                                    )
-                
-        
-        
-        self.borda_frame_pecas_esquerda = Frame(self.janela_principal,
-                                               bg="black")
-        self.borda_frame_pecas_esquerda.place(anchor="w", 
-                                             width=2*self.lado_celula + int(0.0125*self.lado_borda_frame_principal), 
-                                             height=int(0.6*self.lado_borda_frame_principal + 0.0125*self.lado_borda_frame_principal),
-                                             x = LARGURA//2 + self.lado_borda_frame_principal//2,
-                                             y = ALTURA//2 + ALTURA//20)
-        
-        self.frame_pecas_esquerda = Frame(self.janela_principal,
-                                      bg="black")
-        self.frame_pecas_esquerda.place(anchor="w",
-                                    width=2*self.lado_celula, 
-                                    height=int(0.6*self.lado_frame_principal),
-                                    x = LARGURA//2 + self.lado_borda_frame_principal//2 + int(0.02*self.lado_celula),
                                     y = ALTURA//2 + ALTURA//20)
         
         for i in range(6):
@@ -105,8 +86,36 @@ class InterfaceGraficaJogador:
                                     height=self.lado_celula,
                                     anchor="nw"
                                     )
-                
+    
+    def desenhar_pecas_direita(self):
+        self.borda_frame_pecas_direita = Frame(self.janela_principal,
+                                               bg="black")
+        self.borda_frame_pecas_direita.place(anchor="w", 
+                                             width=2*self.lado_celula + int(0.0125*self.lado_borda_frame_principal), 
+                                             height=int(0.6*self.lado_borda_frame_principal + 0.0125*self.lado_borda_frame_principal),
+                                             x = LARGURA//2 + self.lado_borda_frame_principal//2,
+                                             y = ALTURA//2 + ALTURA//20)
         
+        self.frame_pecas_direita = Frame(self.janela_principal,
+                                      bg="black")
+        self.frame_pecas_direita.place(anchor="w",
+                                    width=2*self.lado_celula, 
+                                    height=int(0.6*self.lado_frame_principal),
+                                    x = LARGURA//2 + self.lado_borda_frame_principal//2 + int(0.02*self.lado_celula),
+                                    y = ALTURA//2 + ALTURA//20)
+        
+        for i in range(6):
+            for j in range(2):
+                label_posicao = Label(self.frame_pecas_direita,
+                                      bg="white")
+                label_posicao.place(x=j*self.lado_celula,
+                                    y=i*self.lado_frame_principal//10,
+                                    width=self.lado_celula, 
+                                    height=self.lado_celula,
+                                    anchor="nw"
+                                    )
+    
+    def desenhar_mensagem(self):
         mensagem = "Seu turno!"
         self.frameMensagem = Frame(self.janela_principal,
                                    bg="gray"
@@ -128,11 +137,5 @@ class InterfaceGraficaJogador:
                                  x = 0,
                                  y = 0
                                  )
-        
-        
-        self.janela_principal.mainloop()
-        
-
-
 
 InterfaceGraficaJogador()

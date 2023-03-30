@@ -26,4 +26,5 @@ python3 ./src/python/main.py
 Ou:
 
 ```shell
-python ./src/python/main.py```
+python ./src/python/main.py
+```

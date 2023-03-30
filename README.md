@@ -5,17 +5,25 @@ Projeto da disciplina Engenharia de Software 1. Implementação do jogo de tabul
 
 - Python
 - Tkinter
+- Pillow
+
+## Instar pré-requisitos
+
+Na pasta raiz:
+
+```shell
+pip install -r ../requirements.txt
+```
 
 ## Executar
 
-Dentro da pasta ./src:
+Na pasta raiz:
 
 ```shell
-python3 main.py
+python3 ./src/python/main.py
 ```
 
 Ou:
 
 ```shell
-python main.py
-```
+python ./src/python/main.py```

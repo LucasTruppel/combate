@@ -1,6 +1,7 @@
 from tkinter import *
 from constantes import *
 from objetoInterface import objetoInterface
+from PIL import Image, ImageTk
 
 class InterfaceGraficaJogador:
     
@@ -18,6 +19,8 @@ class InterfaceGraficaJogador:
         self.matriz_pecas = []
         self.matriz_pecas_esquerda = []
         self.matriz_pecas_direita = []
+        
+        self.imagens = self.ler_imagens()
 
         self.desenhar_frame_principal()
         self.desenhar_celulas()
@@ -70,7 +73,8 @@ class InterfaceGraficaJogador:
                 
     def desenhar_pecas_esquerda(self):
         self.borda_frame_pecas_esquerda = Frame(self.janela_principal,
-                                               bg="black")
+                                               bg="black",
+                                               )
         self.borda_frame_pecas_esquerda.place(anchor="e", 
                                              width=2*self.lado_celula + int(0.0125*self.lado_borda_frame_principal), 
                                              height=int(0.6*self.lado_borda_frame_principal + 0.0125*self.lado_borda_frame_principal),
@@ -88,8 +92,20 @@ class InterfaceGraficaJogador:
         for i in range(6):
             linha = []
             for j in range(2):
-                label_posicao = Label(self.frame_pecas_esquerda,
-                                      bg="white")
+                if j == 0:
+                    label_posicao = Label(self.frame_pecas_esquerda,
+                                      bg="white",
+                                      text=self.criar_texto_peca(i),
+                                      font="arial 10",
+                                      width=self.lado_celula, 
+                                      height=self.lado_celula)
+                else:
+                    label_posicao = Label(self.frame_pecas_esquerda,
+                                      bg="white",
+                                      image=self.imagens[i],
+                                      width=self.lado_celula, 
+                                      height=self.lado_celula)
+                    
                 label_posicao.place(x=j*self.lado_celula,
                                     y=i*self.lado_frame_principal//10,
                                     width=self.lado_celula, 
@@ -122,8 +138,20 @@ class InterfaceGraficaJogador:
         for i in range(6):
             linha = []
             for j in range(2):
-                label_posicao = Label(self.frame_pecas_direita,
-                                      bg="white")
+                if j == 1:
+                    label_posicao = Label(self.frame_pecas_direita,
+                                      bg="white",
+                                      text=self.criar_texto_peca(6+i),
+                                      font="arial 10",
+                                      width=self.lado_celula, 
+                                      height=self.lado_celula)
+                else:
+                    label_posicao = Label(self.frame_pecas_direita,
+                                      bg="white",
+                                      image=self.imagens[6+i],
+                                      width=self.lado_celula, 
+                                      height=self.lado_celula)
+                    
                 label_posicao.place(x=j*self.lado_celula,
                                     y=i*self.lado_frame_principal//10,
                                     width=self.lado_celula, 
@@ -136,7 +164,7 @@ class InterfaceGraficaJogador:
             self.matriz_pecas_direita.append(linha)
     
     def desenhar_mensagem(self):
-        mensagem = "Seu turno!"
+        mensagem = "Posicione suas peças!"
         self.frameMensagem = Frame(self.janela_principal,
                                    bg="gray"
                                    )
@@ -149,7 +177,7 @@ class InterfaceGraficaJogador:
         self.labelMensagem = Label(self.frameMensagem,
                                    bg="gray",
                                    text=mensagem,
-                                   font="arial 30"
+                                   font="arial 40"
                                    )
         self.labelMensagem.place(anchor="nw",
                                  width=int(self.lado_borda_frame_principal), 
@@ -188,3 +216,17 @@ class InterfaceGraficaJogador:
             else:
                 label_esquerda.config(bg="white")
                 label_direita.config(bg="white")
+
+    def ler_imagens(self):
+        imagens = []
+        for i in range(13):
+            imagem = Image.open(f"./src/resources/images/{i}.png").convert("RGBA")
+            imagem = imagem.resize((self.lado_celula, self.lado_celula), Image.ANTIALIAS)
+            imagens.append(ImageTk.PhotoImage(imagem))
+        return imagens
+    
+    def criar_texto_peca(self, peca):
+        return nome_peca[peca] +"\nF: " + str(peca) +"\nD: " + str(quantidade_inicial[peca])
+
+if __name__ == "__main__":
+    InterfaceGraficaJogador()

@@ -221,7 +221,7 @@ class InterfaceGraficaJogador:
         imagens = []
         for i in range(13):
             imagem = Image.open(f"./src/resources/images/{i}.png").convert("RGBA")
-            imagem = imagem.resize((self.lado_celula, self.lado_celula), Image.ANTIALIAS)
+            imagem = imagem.resize((int(self.lado_celula*0.9), int(self.lado_celula*0.9)), Image.ANTIALIAS)
             imagens.append(ImageTk.PhotoImage(imagem))
         return imagens
     

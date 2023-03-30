@@ -7,7 +7,7 @@ Projeto da disciplina Engenharia de Software 1. Implementação do jogo de tabul
 - Tkinter
 - Pillow
 
-## Instar pré-requisitos
+## Instalar pré-requisitos
 
 Na pasta raiz:
 

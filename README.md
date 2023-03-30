@@ -12,7 +12,7 @@ Projeto da disciplina Engenharia de Software 1. Implementação do jogo de tabul
 Na pasta raiz:
 
 ```shell
-pip install -r ../requirements.txt
+pip install -r ./requirements.txt
 ```
 
 ## Executar

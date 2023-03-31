@@ -1,2 +1,2 @@
-tk
-Pillow
+tk 
+Pillow == 9.4.0

@@ -22,6 +22,7 @@ class InterfaceGraficaJogador:
         
         self.imagens = self.ler_imagens()
 
+        self.criar_menu()
         self.desenhar_frame_principal()
         self.desenhar_celulas()
         self.desenhar_pecas_direita()
@@ -29,6 +30,15 @@ class InterfaceGraficaJogador:
         self.desenhar_mensagem()
         
         self.janela_principal.mainloop()
+        
+    def criar_menu(self):
+        self.barra_menu = Menu(self.janela_principal)
+        self.janela_principal.config(menu=self.barra_menu)
+        self.barra_menu.add_command(label="Conectar")
+        self.barra_menu.add_command(label="Iniciar partida")
+        self.barra_menu.add_command(label="Terminar preparação")
+
+        
         
     def desenhar_frame_principal(self):
         self.borda_frame_principal = Frame(self.janela_principal,
@@ -164,7 +174,7 @@ class InterfaceGraficaJogador:
             self.matriz_pecas_direita.append(linha)
     
     def desenhar_mensagem(self):
-        mensagem = "Posicione suas peças!"
+        mensagem = "Conecte-se para jogar!"
         self.frameMensagem = Frame(self.janela_principal,
                                    bg="gray"
                                    )

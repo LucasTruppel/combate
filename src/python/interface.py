@@ -34,9 +34,12 @@ class InterfaceGraficaJogador:
     def criar_menu(self):
         self.barra_menu = Menu(self.janela_principal)
         self.janela_principal.config(menu=self.barra_menu)
-        self.barra_menu.add_command(label="Conectar")
-        self.barra_menu.add_command(label="Iniciar partida")
-        self.barra_menu.add_command(label="Terminar preparação")
+        self.barra_menu.add_command(label="Conectar", 
+                                    command= lambda: self.criar_popup("Conexão não disponível."))
+        self.barra_menu.add_command(label="Iniciar partida", 
+                                    command= lambda: self.criar_popup("É preciso conectar-se primeiro."))
+        self.barra_menu.add_command(label="Terminar preparação", 
+                                    command= lambda: self.criar_popup("Partida ainda não iniciada."))
 
         
         
@@ -237,6 +240,14 @@ class InterfaceGraficaJogador:
     
     def criar_texto_peca(self, peca):
         return nome_peca[peca] +"\nF: " + str(peca) +"\nD: " + str(quantidade_inicial[peca])
+    
+    def criar_popup(self, texto):
+        popup = Toplevel(self.janela_principal)
+        popup.geometry(f"{LARGURA//4}x{ALTURA//4}")
+        popup.title("Aviso")
+        popup.resizable(False, False)
+        Label(popup, text = texto, font = "Arial 18").pack(pady = ALTURA//16)
+        Button(popup, text="Fechar", command=popup.destroy).pack()
 
 if __name__ == "__main__":
     InterfaceGraficaJogador()

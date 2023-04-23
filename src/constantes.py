@@ -1,5 +1,5 @@
-ALTURA = 900
-LARGURA = 1400
+ALTURA = 800
+LARGURA = 1280
 
 nome_peca = {
     0 : "Bandeira",

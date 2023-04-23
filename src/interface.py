@@ -1,9 +1,14 @@
 from tkinter import *
+from tkinter import messagebox
+from tkinter import simpledialog
+from dog.dog_interface import DogPlayerInterface
+from dog.dog_actor import DogActor
 from constantes import *
 from objetoInterface import objetoInterface
 from PIL import Image, ImageTk
 
-class InterfaceGraficaJogador:
+
+class InterfaceGraficaJogador(DogPlayerInterface):
     
     def __init__(self) -> None:
         self.janela_principal = Tk()
@@ -29,15 +34,20 @@ class InterfaceGraficaJogador:
         self.desenhar_pecas_esquerda()
         self.desenhar_mensagem()
         
+        #dog
+        player_name = simpledialog.askstring(title= "Player Identification", prompt = "Qual o seu nome?")
+        self.dog_server_interface = DogActor()
+        message = self.dog_server_interface.initialize(player_name,self)
+        messagebox.showinfo(message = message)
+
+
         self.janela_principal.mainloop()
         
     def criar_menu(self):
         self.barra_menu = Menu(self.janela_principal)
         self.janela_principal.config(menu=self.barra_menu)
-        self.barra_menu.add_command(label="Conectar", 
-                                    command= lambda: self.criar_popup("Conexão não disponível."))
         self.barra_menu.add_command(label="Iniciar partida", 
-                                    command= lambda: self.criar_popup("É preciso conectar-se primeiro."))
+                                    command= lambda: self.start_match())
         self.barra_menu.add_command(label="Terminar preparação", 
                                     command= lambda: self.criar_popup("Partida ainda não iniciada."))
 
@@ -233,7 +243,7 @@ class InterfaceGraficaJogador:
     def ler_imagens(self):
         imagens = []
         for i in range(13):
-            imagem = Image.open(f"./src/resources/images/{i}.png").convert("RGBA")
+            imagem = Image.open(f"./resources/images/{i}.png").convert("RGBA")
             imagem = imagem.resize((int(self.lado_celula*0.9), int(self.lado_celula*0.9)), Image.ANTIALIAS)
             imagens.append(ImageTk.PhotoImage(imagem))
         return imagens
@@ -248,6 +258,16 @@ class InterfaceGraficaJogador:
         popup.resizable(False, False)
         Label(popup, text = texto, font = "Arial 18").pack(pady = ALTURA//16)
         Button(popup, text="Fechar", command=popup.destroy).pack()
+
+
+    def start_match(self):
+        start_status = self.dog_server_interface.start_match(2)
+        message = start_status.get_message()
+        messagebox.showinfo(message=message)
+    
+    def receive_start(self, start_status):
+        message = start_status.get_message()
+        messagebox.showinfo(message=message)
 
 if __name__ == "__main__":
     InterfaceGraficaJogador()

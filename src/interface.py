@@ -21,11 +21,7 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         self.imagens = self.ler_imagens()
 
         self.criar_menu()
-        self.desenhar_frame_principal()
-        self.desenhar_celulas()
-        self.desenhar_pecas_direita()
-        self.desenhar_pecas_esquerda()
-        self.desenhar_mensagem()
+        self.desenhar_janela()
         
         #dog
         player_name = simpledialog.askstring(title= "Player Identification", prompt = "Qual o seu nome?")
@@ -35,6 +31,7 @@ class InterfaceGraficaJogador(DogPlayerInterface):
 
 
         self.janela_principal.mainloop()
+
     
     def init_tkinter(self):
         self.janela_principal.title("Combate")
@@ -45,7 +42,13 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         self.lado_borda_frame_principal = int(ALTURA*0.85)
         self.lado_frame_principal = int(self.lado_borda_frame_principal*0.98)
         self.lado_celula = self.lado_frame_principal//10 - int(0.0030*self.lado_frame_principal)
-
+    
+    def desenhar_janela(self):
+        self.desenhar_frame_principal()
+        self.desenhar_celulas()
+        self.desenhar_pecas_direita()
+        self.desenhar_pecas_esquerda()
+        self.desenhar_mensagem()
         
         
     def criar_menu(self):

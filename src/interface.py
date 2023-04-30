@@ -48,7 +48,7 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         self.desenhar_celulas()
         self.desenhar_pecas_direita()
         self.desenhar_pecas_esquerda()
-        self.desenhar_mensagem()
+        self.desenhar_mensagem("Conecte-se para jogar!")
         
         
     def criar_menu(self):
@@ -194,8 +194,8 @@ class InterfaceGraficaJogador(DogPlayerInterface):
                                    objeto=objetoInterface.PECAS_DIREITA.value: self.click(event, linha, coluna, objeto))
             self.matriz_pecas_direita.append(linha)
     
-    def desenhar_mensagem(self):
-        mensagem = "Conecte-se para jogar!"
+    def desenhar_mensagem(self, mensagem):
+        
         self.frameMensagem = Frame(self.janela_principal,
                                    bg="gray"
                                    )

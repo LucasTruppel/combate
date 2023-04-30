@@ -12,14 +12,7 @@ class InterfaceGraficaJogador(DogPlayerInterface):
     
     def __init__(self) -> None:
         self.janela_principal = Tk()
-        self.janela_principal.title("Combate")
-        self.janela_principal.geometry(f"{LARGURA}x{ALTURA}")
-        self.janela_principal.resizable(False, False)
-        self.janela_principal.configure(bg="gray")
-        
-        self.lado_borda_frame_principal = int(ALTURA*0.85)
-        self.lado_frame_principal = int(self.lado_borda_frame_principal*0.98)
-        self.lado_celula = self.lado_frame_principal//10 - int(0.0030*self.lado_frame_principal)
+        self.init_tkinter()
 
         self.matriz_pecas = []
         self.matriz_pecas_esquerda = []
@@ -42,6 +35,18 @@ class InterfaceGraficaJogador(DogPlayerInterface):
 
 
         self.janela_principal.mainloop()
+    
+    def init_tkinter(self):
+        self.janela_principal.title("Combate")
+        self.janela_principal.geometry(f"{LARGURA}x{ALTURA}")
+        self.janela_principal.resizable(False, False)
+        self.janela_principal.configure(bg="gray")
+        
+        self.lado_borda_frame_principal = int(ALTURA*0.85)
+        self.lado_frame_principal = int(self.lado_borda_frame_principal*0.98)
+        self.lado_celula = self.lado_frame_principal//10 - int(0.0030*self.lado_frame_principal)
+
+        
         
     def criar_menu(self):
         self.barra_menu = Menu(self.janela_principal)

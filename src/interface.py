@@ -6,6 +6,7 @@ from dog.dog_actor import DogActor
 from constantes import *
 from objetoInterface import objetoInterface
 from PIL import Image, ImageTk
+from jogo import Jogo
 
 
 class InterfaceGraficaJogador(DogPlayerInterface):
@@ -23,16 +24,16 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         self.criar_menu()
         self.desenhar_janela()
         
+        self.jogo = Jogo()
+        
         #dog
         player_name = simpledialog.askstring(title= "Player Identification", prompt = "Qual o seu nome?")
         self.dog_server_interface = DogActor()
         message = self.dog_server_interface.initialize(player_name,self)
         messagebox.showinfo(message = message)
-
-
+        
         self.janela_principal.mainloop()
 
-    
     def init_tkinter(self):
         self.janela_principal.title("Combate")
         self.janela_principal.geometry(f"{LARGURA}x{ALTURA}")
@@ -49,8 +50,7 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         self.desenhar_pecas_direita()
         self.desenhar_pecas_esquerda()
         self.desenhar_mensagem("Conecte-se para jogar!")
-        
-        
+         
     def criar_menu(self):
         self.barra_menu = Menu(self.janela_principal)
         self.janela_principal.config(menu=self.barra_menu)
@@ -58,9 +58,7 @@ class InterfaceGraficaJogador(DogPlayerInterface):
                                     command= lambda: self.start_match())
         self.barra_menu.add_command(label="Terminar preparação", 
                                     command= lambda: self.criar_popup("Partida ainda não iniciada."))
-
-        
-        
+     
     def desenhar_frame_principal(self):
         self.borda_frame_principal = Frame(self.janela_principal,
                                            bg="black")
@@ -267,15 +265,28 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         Label(popup, text = texto, font = "Arial 18").pack(pady = ALTURA//16)
         Button(popup, text="Fechar", command=popup.destroy).pack()
 
-
-    def start_match(self):
+    def start_match(self) -> None:
         start_status = self.dog_server_interface.start_match(2)
+        code = start_status.get_code()
         message = start_status.get_message()
-        messagebox.showinfo(message=message)
+        
+        if code == "0" or code == "1":
+            messagebox.showinfo(message=message)
+        elif code =="2":
+            local_player_id = start_status.get_local_id()
+            players = start_status.get_players()
+            self.continuar_inicio()
+            messagebox.showinfo(message=message)
     
-    def receive_start(self, start_status):
+    def receive_start(self, start_status) -> None:
+        local_player_id = start_status.get_local_id()
+        players = start_status.get_players()
+        
         message = start_status.get_message()
         messagebox.showinfo(message=message)
+        
+    def continuar_inicio(self) -> None:
+        self.jogo.continuar_inicio()
 
 if __name__ == "__main__":
     InterfaceGraficaJogador()

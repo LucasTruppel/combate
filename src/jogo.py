@@ -19,3 +19,13 @@ class Jogo:
     def continuar_inicio(self) -> None:
         self.estado = Estado.PREPARACAO
         self.tabuleiro.iniciar_tabuleiro
+    
+    def obter_status(self) -> None:
+        pass
+    
+    def selecionar_posicao(self, linha: int, coluna: int, peca_fora_tabuleiro: bool) -> dict:
+        turno = self.jogador_local.get_turno()
+        if turno:
+            posicao_selecionada = self.jogador_local.get_posicao_selecionada()
+            peca_selecionada = self.jogador_local.get_peca_selecionada()
+            #TODO

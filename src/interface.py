@@ -287,6 +287,12 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         
     def continuar_inicio(self) -> None:
         self.jogo.continuar_inicio()
+    
+    def atualizar_interface(self, status) -> None:
+        pass
+    
+    def selecionar_posicao(linha: int, coluna: int, peca_fora_tabuleiro: bool) -> None:
+        jogada = self.jogo.selecionar_posicao(linha, coluna, peca_fora_tabuleiro)
 
 if __name__ == "__main__":
     InterfaceGraficaJogador()

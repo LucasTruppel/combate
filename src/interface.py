@@ -7,6 +7,7 @@ from constantes import *
 from objetoInterface import objetoInterface
 from PIL import Image, ImageTk
 from jogo import Jogo
+from imageminterface import ImagemInterface
 
 
 class InterfaceGraficaJogador(DogPlayerInterface):
@@ -25,6 +26,7 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         self.desenhar_janela()
         
         self.jogo = Jogo()
+        self.jogo.inicializar()
         
         #dog
         player_name = simpledialog.askstring(title= "Player Identification", prompt = "Qual o seu nome?")
@@ -217,6 +219,7 @@ class InterfaceGraficaJogador(DogPlayerInterface):
 
     def click(self, event, i, j, objeto):
         if objeto == objetoInterface.TABULEIRO.value:
+            # old
             label = self.matriz_pecas[i][j]
             if label.cget("bg") != "red":
                 label.config(bg="red")
@@ -225,8 +228,12 @@ class InterfaceGraficaJogador(DogPlayerInterface):
                     label.config(bg="blue")
                 else:
                     label.config(bg="green")
-        
+                    
+            # new
+            self.selecionar_posicao(i, j, False)
+            
         elif objeto == objetoInterface.PECAS_ESQUERDA.value:
+            # old
             label_esquerda = self.matriz_pecas_esquerda[i][0]
             label_direita = self.matriz_pecas_esquerda[i][1]
             if label_esquerda.cget("bg") != "red":
@@ -236,7 +243,11 @@ class InterfaceGraficaJogador(DogPlayerInterface):
                 label_esquerda.config(bg="white")
                 label_direita.config(bg="white")
                 
+            # new
+            self.selecionar_posicao(i, 0, True)
+                
         elif objeto == objetoInterface.PECAS_DIREITA.value:
+            # old
             label_esquerda = self.matriz_pecas_direita[i][0]
             label_direita = self.matriz_pecas_direita[i][1]
             if label_esquerda.cget("bg") != "red":
@@ -245,6 +256,9 @@ class InterfaceGraficaJogador(DogPlayerInterface):
             else:
                 label_esquerda.config(bg="white")
                 label_direita.config(bg="white")
+                
+            # new
+            self.selecionar_posicao(i, 1, True)
 
     def ler_imagens(self):
         imagens = []
@@ -288,11 +302,17 @@ class InterfaceGraficaJogador(DogPlayerInterface):
     def continuar_inicio(self) -> None:
         self.jogo.continuar_inicio()
     
-    def atualizar_interface(self, status) -> None:
-        pass
-    
-    def selecionar_posicao(linha: int, coluna: int, peca_fora_tabuleiro: bool) -> None:
-        jogada = self.jogo.selecionar_posicao(linha, coluna, peca_fora_tabuleiro)
+    def atualizar_interface(self, status: ImagemInterface) -> None:
+        print(status.tabuleiro)
+        for i in range(10):
+            for j in range(10):
+                label = self.matriz_pecas[i][j]
+                forca = status.tabuleiro[i][j]
+                label.config(image = self.imagens[forca])
 
-if __name__ == "__main__":
-    InterfaceGraficaJogador()
+    def selecionar_posicao(self, linha: int, coluna: int, peca_fora_tabuleiro: bool) -> None:
+        jogada = self.jogo.selecionar_posicao(linha, coluna, peca_fora_tabuleiro)
+        if jogada != None:
+            self.dog_server_interface.send_move(jogada)
+        status = self.jogo.obter_status()
+        self.atualizar_interface(status)

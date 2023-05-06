@@ -287,6 +287,7 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         if code == "0" or code == "1":
             messagebox.showinfo(message=message)
         elif code =="2":
+            print("Aqui")
             local_player_id = start_status.get_local_id()
             players = start_status.get_players()
             self.continuar_inicio()
@@ -303,12 +304,14 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         self.jogo.continuar_inicio()
     
     def atualizar_interface(self, status: ImagemInterface) -> None:
-        print(status.tabuleiro)
         for i in range(10):
             for j in range(10):
                 label = self.matriz_pecas[i][j]
                 forca = status.tabuleiro[i][j]
-                label.config(image = self.imagens[forca])
+                if forca > 0:
+                    label.config(image = self.imagens[forca])
+                else:
+                    label.config(image = None)
 
     def selecionar_posicao(self, linha: int, coluna: int, peca_fora_tabuleiro: bool) -> None:
         jogada = self.jogo.selecionar_posicao(linha, coluna, peca_fora_tabuleiro)

@@ -13,6 +13,7 @@ class Jogo:
         
     def inicializar(self) -> None:
         self.tabuleiro.iniciar_tabuleiro()
+        self.jogador_local.instanciar_pecas()
         
     def comecar_partida(self) -> None:
         pass
@@ -40,12 +41,16 @@ class Jogo:
             peca_selecionada = self.jogador_local.get_peca_selecionada()
             
             if posicao_selecionada == None and peca_selecionada == None:
+                print("\nSelecionar origem: ")
                 self.selecionar_origem(linha, coluna, peca_fora_tabuleiro)
             else:
+                print("\nSelecionar destino: ")
                 jogada = self.selecionar_destino(linha, coluna)
         return jogada
                 
     def selecionar_origem(self, linha: int, coluna: int, peca_fora_tabuleiro: bool) -> None:
+        print("fora tab: ", peca_fora_tabuleiro)
+        print("estado: ", self.estado)
         if peca_fora_tabuleiro and self.estado == Estado.PREPARACAO:
             self.jogador_local.selecionar_peca_fora_tabuleiro(linha, coluna)
             
@@ -64,7 +69,10 @@ class Jogo:
     def selecionar_destino(self, linha: int, coluna: int) -> dict:
         peca_selecionada = self.jogador_local.get_peca_selecionada()
         posicao_origem = self.jogador_local.get_posicao_selecionada()
-        peca_origem = posicao_origem.get_peca()
+        if posicao_origem != None:
+            peca_origem = posicao_origem.get_peca()
+        else:
+            peca_origem = None
         posicao_destino = self.tabuleiro.get_posicao(linha, coluna)
         peca_destino = posicao_destino.get_peca()
         
@@ -74,6 +82,7 @@ class Jogo:
                     posicao_destino.set_peca(peca_selecionada)
                     self.jogador_local.remover_peca_fora_tabuleiro(peca_selecionada)
                     posicao_destino.set_ocupante(self.jogador_local)
+                    self.jogador_local.set_peca_selecionada(None)
                 else:
                     self.jogador_local.set_peca_selecionada(None)
             else:
@@ -81,6 +90,7 @@ class Jogo:
                     posicao_destino.set_peca(None)
                     posicao_destino.set_ocupante(None)
                     self.jogador_local.adicionar_peca_fora_tabuleiro(peca_selecionada)
+                    self.jogador_local.set_posicao_selecionada(None)
                 else:
                     self.jogador_local.set_posicao_selecionada(None)
         else:

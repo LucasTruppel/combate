@@ -7,7 +7,7 @@ class Jogador:
     def __init__(self) -> None:
         self.turno = True
         self.vencedor = False
-        self.pecas_fora_tabuleiro = [[] for i in range(12)]
+        self.pecas_fora_tabuleiro = None
         self.nome = ""
         self.posicao_selecionada = None
         self.posicoes_alcancaveis_posicao_selecionada = []
@@ -33,6 +33,7 @@ class Jogador:
         self.peca_selecionada = peca
         
     def instanciar_pecas(self) -> None:
+        self.pecas_fora_tabuleiro = [[] for i in range(12)]
         for forca in range(12):
             for quantidade in range(quantidade_inicial[forca]):
                 if forca == 0 or forca == 12:

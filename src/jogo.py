@@ -12,8 +12,7 @@ class Jogo:
         self.jogador_remoto = Jogador()
         
     def inicializar(self) -> None:
-        self.tabuleiro.iniciar_tabuleiro()
-        self.jogador_local.instanciar_pecas()
+        pass
         
     def comecar_partida(self) -> None:
         pass
@@ -23,6 +22,8 @@ class Jogo:
         
     def continuar_inicio(self) -> None:
         self.estado = Estado.PREPARACAO
+        self.tabuleiro.iniciar_tabuleiro()
+        self.jogador_local.instanciar_pecas()
     
     def obter_status(self) -> ImagemInterface:
         tabuleiro_int = [[-1 for j in range(10)] for i in range(10)]

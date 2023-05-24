@@ -126,7 +126,7 @@ class InterfaceGraficaJogador(DogPlayerInterface):
                 if j == 0:
                     label_posicao = Label(self.frame_pecas_esquerda,
                                       bg="white",
-                                      text=self.criar_texto_peca(i),
+                                      text=self.criar_texto_peca(i, quantidade_inicial[i]),
                                       font="arial 10",
                                       width=self.lado_celula, 
                                       height=self.lado_celula)
@@ -172,7 +172,7 @@ class InterfaceGraficaJogador(DogPlayerInterface):
                 if j == 1:
                     label_posicao = Label(self.frame_pecas_direita,
                                       bg="white",
-                                      text=self.criar_texto_peca(6+i),
+                                      text=self.criar_texto_peca(6+i, quantidade_inicial[6+i]),
                                       font="arial 10",
                                       width=self.lado_celula, 
                                       height=self.lado_celula)
@@ -219,45 +219,10 @@ class InterfaceGraficaJogador(DogPlayerInterface):
 
     def click(self, event, i, j, objeto):
         if objeto == objetoInterface.TABULEIRO.value:
-            # old
-            label = self.matriz_pecas[i][j]
-            if label.cget("bg") != "red":
-                label.config(bg="red")
-            else:
-                if (i==4 or i==5) and (j==2 or j==3 or j==6 or j==7):
-                    label.config(bg="blue")
-                else:
-                    label.config(bg="green")
-                    
-            # new
-            self.selecionar_posicao(i, j, False)
-            
+            self.selecionar_posicao(i, j, False)     
         elif objeto == objetoInterface.PECAS_ESQUERDA.value:
-            # old
-            label_esquerda = self.matriz_pecas_esquerda[i][0]
-            label_direita = self.matriz_pecas_esquerda[i][1]
-            if label_esquerda.cget("bg") != "red":
-                label_esquerda.config(bg="red")
-                label_direita.config(bg="red")
-            else:
-                label_esquerda.config(bg="white")
-                label_direita.config(bg="white")
-                
-            # new
-            self.selecionar_posicao(i, 0, True)
-                
+            self.selecionar_posicao(i, 0, True)             
         elif objeto == objetoInterface.PECAS_DIREITA.value:
-            # old
-            label_esquerda = self.matriz_pecas_direita[i][0]
-            label_direita = self.matriz_pecas_direita[i][1]
-            if label_esquerda.cget("bg") != "red":
-                label_esquerda.config(bg="red")
-                label_direita.config(bg="red")
-            else:
-                label_esquerda.config(bg="white")
-                label_direita.config(bg="white")
-                
-            # new
             self.selecionar_posicao(i, 1, True)
 
     def ler_imagens(self):
@@ -268,8 +233,8 @@ class InterfaceGraficaJogador(DogPlayerInterface):
             imagens.append(ImageTk.PhotoImage(imagem))
         return imagens
     
-    def criar_texto_peca(self, peca):
-        return nome_peca[peca] +"\nF: " + str(peca) +"\nD: " + str(quantidade_inicial[peca])
+    def criar_texto_peca(self, peca, quantidade):
+        return nome_peca[peca] +"\nF: " + str(peca) +"\nD: " + str(quantidade)
     
     def criar_popup(self, texto):
         popup = Toplevel(self.janela_principal)
@@ -287,7 +252,6 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         if code == "0" or code == "1":
             messagebox.showinfo(message=message)
         elif code =="2":
-            print("Aqui")
             local_player_id = start_status.get_local_id()
             players = start_status.get_players()
             self.continuar_inicio()
@@ -306,12 +270,40 @@ class InterfaceGraficaJogador(DogPlayerInterface):
     def atualizar_interface(self, status: ImagemInterface) -> None:
         for i in range(10):
             for j in range(10):
-                label = self.matriz_pecas[i][j]
-                forca = status.tabuleiro[i][j]
-                if forca > 0:
-                    label.config(image = self.imagens[forca])
-                else:
-                    label.config(image = None)
+                if not ((i==4 or i==5) and (j==2 or j==3 or j==6 or j==7)): # Os lagos nunca atualizam
+                    label = self.matriz_pecas[i][j]
+                    forca = status.tabuleiro[i][j]
+                    selecionado = status.posicoes_selecionada[i][j]
+                    
+                    if selecionado == 1:
+                        label.config(bg="red")
+                    elif selecionado == 2:
+                        label.config(bg="yellow")
+                    else:
+                        label.config(bg="green")
+                        
+                    if forca > -1:
+                        label.config(image = self.imagens[forca])
+                    else:
+                        label.config(image = "")
+                
+        peca = status.peca_fora_tabuleiro_selecionada 
+        for i in range(12):
+            cor = "red" if i == peca else "white"
+            if i < 6:
+                label_texto_peca = self.matriz_pecas_esquerda[i][0]
+                novo_texto = self.criar_texto_peca(i, status.pecas_fora_tabuleiro[i])
+                label_texto_peca.config(text = novo_texto, bg = cor)
+                
+                label_peca = self.matriz_pecas_esquerda[i][1]
+                label_peca.config(bg = cor)
+            else:
+                label_texto_peca = self.matriz_pecas_direita[i-6][1]
+                novo_texto = self.criar_texto_peca(i, status.pecas_fora_tabuleiro[i])
+                label_texto_peca.config(text = novo_texto, bg = cor)
+                
+                label_peca = self.matriz_pecas_direita[i-6][0]
+                label_peca.config(bg = cor)
 
     def selecionar_posicao(self, linha: int, coluna: int, peca_fora_tabuleiro: bool) -> None:
         jogada = self.jogo.selecionar_posicao(linha, coluna, peca_fora_tabuleiro)

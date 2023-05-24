@@ -7,7 +7,7 @@ class Jogador:
     def __init__(self) -> None:
         self.turno = True
         self.vencedor = False
-        self.pecas_fora_tabuleiro = None
+        self.pecas_fora_tabuleiro = []
         self.nome = ""
         self.posicao_selecionada = None
         self.posicoes_alcancaveis_posicao_selecionada = []
@@ -22,6 +22,12 @@ class Jogador:
     
     def get_peca_selecionada(self) -> Peca:
         return self.peca_selecionada
+    
+    def get_quantidade_pecas_fora_tabuleiro(self) -> list:
+        quantidades = []
+        for lista_pecas in self.pecas_fora_tabuleiro:
+            quantidades.append(len(lista_pecas))
+        return quantidades
         
     def set_jogador2(self, eh_jogador2: bool) -> None:
         self.jogador2 = eh_jogador2
@@ -55,9 +61,6 @@ class Jogador:
         lista_tipo_peca.append(peca)
             
     def remover_peca_fora_tabuleiro(self, peca: Peca) -> None:
-        print(peca)
-        print(type(peca))
-        print(peca.get_forca())
         lista_tipo_peca = self.pecas_fora_tabuleiro[peca.get_forca()]
         lista_tipo_peca.remove(peca)
             

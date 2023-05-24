@@ -14,6 +14,9 @@ class Posicao:
     def get_peca(self) -> Peca:
         return self.peca
     
+    def get_coordenada(self) -> tuple:
+        return self.coordenada
+    
     def set_peca(self, peca: Peca) -> None:
         self.peca = peca
         

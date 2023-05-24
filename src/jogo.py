@@ -12,7 +12,8 @@ class Jogo:
         self.jogador_remoto = Jogador()
         
     def inicializar(self) -> None:
-        pass
+        self.tabuleiro.iniciar_tabuleiro()
+        self.jogador_local.instanciar_pecas()
         
     def comecar_partida(self) -> None:
         pass
@@ -22,8 +23,6 @@ class Jogo:
         
     def continuar_inicio(self) -> None:
         self.estado = Estado.PREPARACAO
-        self.tabuleiro.iniciar_tabuleiro()
-        self.jogador_local.instanciar_pecas()
     
     def obter_status(self) -> ImagemInterface:
         tabuleiro_int = [[-1 for j in range(10)] for i in range(10)]
@@ -32,37 +31,44 @@ class Jogo:
                 peca = self.tabuleiro.get_posicao(i, j).get_peca()
                 if peca != None:
                     tabuleiro_int[i][j] = peca.get_forca()
-        return ImagemInterface("", tabuleiro_int, [], [])
+                    
+        posicoes_selecionadas = [[0 for j in range(10)] for i in range(10)]
+        posicao_selecionada = self.jogador_local.get_posicao_selecionada()
+        if posicao_selecionada != None:
+            linha,coluna = posicao_selecionada.get_coordenada()
+            posicoes_selecionadas[linha][coluna] = 1
+        
+        # Peça de fora do tabuleiro selecionada
+        peca_selecionada = self.jogador_local.get_peca_selecionada()
+        forca_peca_selecionada = -1
+        if peca_selecionada != None:
+            forca_peca_selecionada = peca_selecionada.get_forca()
+                   
+        return ImagemInterface("", tabuleiro_int, forca_peca_selecionada, posicoes_selecionadas, self.jogador_local.get_quantidade_pecas_fora_tabuleiro())
     
     def selecionar_posicao(self, linha: int, coluna: int, peca_fora_tabuleiro: bool) -> dict:
         jogada = None
         turno = self.jogador_local.get_turno()
-        if turno:
+        if (self.estado == Estado.PREPARACAO or self.estado == Estado.COMBATE) and turno:
             posicao_selecionada = self.jogador_local.get_posicao_selecionada()
             peca_selecionada = self.jogador_local.get_peca_selecionada()
             
             if posicao_selecionada == None and peca_selecionada == None:
-                print("\nSelecionar origem: ")
                 self.selecionar_origem(linha, coluna, peca_fora_tabuleiro)
             else:
-                print("\nSelecionar destino: ")
                 jogada = self.selecionar_destino(linha, coluna)
         return jogada
                 
     def selecionar_origem(self, linha: int, coluna: int, peca_fora_tabuleiro: bool) -> None:
-        print("fora tab: ", peca_fora_tabuleiro)
-        print("estado: ", self.estado)
         if peca_fora_tabuleiro and self.estado == Estado.PREPARACAO:
             self.jogador_local.selecionar_peca_fora_tabuleiro(linha, coluna)
-            
         else:
             posicao = self.tabuleiro.get_posicao(linha, coluna)
             jogador = posicao.get_ocupante()
-            peca = posicao.get_peca()
-            
+            peca = posicao.get_peca()    
             if peca != None and jogador == self.jogador_local:
                 casas_por_movimento = peca.get_casas_por_movimento()
-                if casas_por_movimento > 0 and self.estado == Estado.PREPARACAO:
+                if casas_por_movimento > 0 or self.estado == Estado.PREPARACAO:
                     self.jogador_local.set_posicao_selecionada(posicao)
                     if self.estado == Estado.COMBATE:
                         self.jogador_local.verificar_lances_possiveis()
@@ -90,7 +96,7 @@ class Jogo:
                 if posicao_origem == posicao_destino:
                     posicao_destino.set_peca(None)
                     posicao_destino.set_ocupante(None)
-                    self.jogador_local.adicionar_peca_fora_tabuleiro(peca_selecionada)
+                    self.jogador_local.adicionar_peca_fora_tabuleiro(peca_origem)
                     self.jogador_local.set_posicao_selecionada(None)
                 else:
                     self.jogador_local.set_posicao_selecionada(None)

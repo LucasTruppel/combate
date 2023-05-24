@@ -21,6 +21,7 @@ class Jogo:
 
     def receber_inicio(self) -> None:
         self.jogador_local.set_jogador2(True)
+        self.continuar_inicio()
 
     def continuar_inicio(self) -> None:
         self.estado = Estado.PREPARACAO
@@ -105,3 +106,6 @@ class Jogo:
         else:
             pass
             # TODO
+
+    def inverter_posicao(self, i: int, j: int ) -> tuple:
+        return 9 - i, 9 - j

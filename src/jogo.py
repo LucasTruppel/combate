@@ -26,7 +26,7 @@ class Jogo:
 
     def continuar_inicio(self) -> None:
         self.estado = Estado.PREPARACAO
-        self.mesagem = "Posicione suas peças e clique em terminar preparação!"
+        self.mensagem = "Clique em iniciar partida para jogar!"
 
     def obter_status(self) -> ImagemInterface:
         tabuleiro_int = [[-1 for j in range(10)] for i in range(10)]
@@ -57,6 +57,8 @@ class Jogo:
             forca_peca_selecionada = peca_selecionada.get_forca()
             
         print(peca_selecionada)
+        
+        print(self.mensagem)
 
         return ImagemInterface(self.mensagem, tabuleiro_int, forca_peca_selecionada, posicoes_selecionadas,
                                self.jogador_local.get_quantidade_pecas_fora_tabuleiro())

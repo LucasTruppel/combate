@@ -51,7 +51,7 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         self.desenhar_celulas()
         self.desenhar_pecas_direita()
         self.desenhar_pecas_esquerda()
-        self.desenhar_mensagem("Conecte-se para jogar!")
+        self.desenhar_mensagem("Clique em iniciar partida para jogar!")
 
     def criar_menu(self):
         self.barra_menu = Menu(self.janela_principal)
@@ -200,7 +200,7 @@ class InterfaceGraficaJogador(DogPlayerInterface):
                                    bg="gray"
                                    )
         self.frameMensagem.place(anchor="n",
-                                 width=int(self.lado_borda_frame_principal),
+                                 width=int(LARGURA*0.95),
                                  height=int(self.lado_borda_frame_principal//8),
                                  x = LARGURA//2,
                                  y = int(0.01*ALTURA))
@@ -208,10 +208,10 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         self.labelMensagem = Label(self.frameMensagem,
                                    bg="gray",
                                    text=mensagem,
-                                   font="arial 40"
+                                   font="arial 30"
                                    )
         self.labelMensagem.place(anchor="nw",
-                                 width=int(self.lado_borda_frame_principal),
+                                 width=int(LARGURA*0.95),
                                  height=int(self.lado_borda_frame_principal//8),
                                  x = 0,
                                  y = 0

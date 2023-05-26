@@ -306,6 +306,10 @@ class InterfaceGraficaJogador(DogPlayerInterface):
 
                 label_peca = self.matriz_pecas_direita[i-6][0]
                 label_peca.config(bg = cor)
+                
+        self.labelMensagem.config(text=status.mensagem)
+                
+        
 
     def selecionar_posicao(self, linha: int, coluna: int, peca_fora_tabuleiro: bool) -> None:
         jogada = self.jogo.selecionar_posicao(linha, coluna, peca_fora_tabuleiro)

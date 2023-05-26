@@ -11,6 +11,7 @@ class Jogo:
         self.tabuleiro = Tabuleiro()
         self.jogador_local = Jogador()
         self.jogador_remoto = Jogador()
+        self.mensagem = ""
 
     def inicializar(self) -> None:
         self.tabuleiro.iniciar_tabuleiro()
@@ -25,28 +26,39 @@ class Jogo:
 
     def continuar_inicio(self) -> None:
         self.estado = Estado.PREPARACAO
+        self.mesagem = "Posicione suas peças e clique em terminar preparação!"
 
     def obter_status(self) -> ImagemInterface:
         tabuleiro_int = [[-1 for j in range(10)] for i in range(10)]
         for i in range(10):
             for j in range(10):
+                posicao = self.tabuleiro.get_posicao(i, j)
                 peca = self.tabuleiro.get_posicao(i, j).get_peca()
                 if peca is not None:
-                    tabuleiro_int[i][j] = peca.get_forca()
+                    if posicao.get_ocupante() == self.jogador_local:
+                        tabuleiro_int[i][j] = peca.get_forca()
+                    else:
+                        tabuleiro_int[i][j] = 13
+                    
+        print(tabuleiro_int)
 
         posicoes_selecionadas = [[0 for j in range(10)] for i in range(10)]
         posicao_selecionada = self.jogador_local.get_posicao_selecionada()
         if posicao_selecionada is not None:
             linha, coluna = posicao_selecionada.get_coordenada()
             posicoes_selecionadas[linha][coluna] = 1
+        
+        print(posicoes_selecionadas)
 
         # Peça de fora do tabuleiro selecionada
         peca_selecionada = self.jogador_local.get_peca_selecionada()
         forca_peca_selecionada = -1
         if peca_selecionada is not None:
             forca_peca_selecionada = peca_selecionada.get_forca()
+            
+        print(peca_selecionada)
 
-        return ImagemInterface("", tabuleiro_int, forca_peca_selecionada, posicoes_selecionadas,
+        return ImagemInterface(self.mensagem, tabuleiro_int, forca_peca_selecionada, posicoes_selecionadas,
                                self.jogador_local.get_quantidade_pecas_fora_tabuleiro())
 
     def selecionar_posicao(self, linha: int, coluna: int, peca_fora_tabuleiro: bool) -> dict:

@@ -7,7 +7,10 @@ class Tabuleiro:
         
     def get_posicao(self, linha: int, coluna: int) -> Posicao:
         return self.matriz_posicoes[linha][coluna]
-        
+
+    def get_matriz_posicoes(self) -> list[list[Posicao]]:    
+        return self.matriz_posicoes
+
     def iniciar_tabuleiro(self) -> None:
         self.matriz_posicoes = [[None for j in range(10)] for i in range(10)]
         for i in range(10):

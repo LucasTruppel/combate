@@ -123,3 +123,7 @@ class Jogo:
 
     def inverter_posicao(self, i: int, j: int ) -> tuple:
         return 9 - i, 9 - j
+    
+    def espelhar_matriz(jogada: dict) -> dict:
+        pass
+    #TODO

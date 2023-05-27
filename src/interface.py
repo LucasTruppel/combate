@@ -254,7 +254,7 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         elif code =="2":
             local_player_id = start_status.get_local_id()
             players = start_status.get_players()
-            self.continuar_inicio()
+            self.jogo.comecar_partida()
             messagebox.showinfo(message=message)
 
     def receive_start(self, start_status) -> None:
@@ -265,9 +265,12 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         messagebox.showinfo(message=message)
 
         self.jogo.receber_inicio()
-
-    def continuar_inicio(self) -> None:
-        self.jogo.continuar_inicio()
+        
+    def receive_move(self, a_move):
+        pass
+    
+    def receive_withdrawal_notification(self):
+        pass
 
     def atualizar_interface(self, status: ImagemInterface) -> None:
         for i in range(10):
@@ -309,8 +312,6 @@ class InterfaceGraficaJogador(DogPlayerInterface):
                 
         self.labelMensagem.config(text=status.mensagem)
                 
-        
-
     def selecionar_posicao(self, linha: int, coluna: int, peca_fora_tabuleiro: bool) -> None:
         jogada = self.jogo.selecionar_posicao(linha, coluna, peca_fora_tabuleiro)
         if jogada != None:

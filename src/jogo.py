@@ -16,9 +16,11 @@ class Jogo:
     def inicializar(self) -> None:
         self.tabuleiro.iniciar_tabuleiro()
         self.jogador_local.instanciar_pecas()
+        self.jogador_remoto.instanciar_pecas()
 
     def comecar_partida(self) -> None:
-        pass
+        self.jogador_remoto.set_jogador2(True)
+        self.continuar_inicio()
 
     def receber_inicio(self) -> None:
         self.jogador_local.set_jogador2(True)

@@ -5,7 +5,7 @@ from constantes import quantidade_inicial, nome_peca
 class Jogador:
     
     def __init__(self) -> None:
-        self.turno = True
+        self.turno = False
         self.vencedor = False
         self.pecas_fora_tabuleiro = []
         self.nome = ""
@@ -23,6 +23,9 @@ class Jogador:
     def get_peca_selecionada(self) -> Peca:
         return self.peca_selecionada
     
+    def get_pecas_fora_tabuleiro(self) -> list:
+        return self.pecas_fora_tabuleiro
+    
     def get_quantidade_pecas_fora_tabuleiro(self) -> list:
         quantidades = []
         for lista_pecas in self.pecas_fora_tabuleiro:
@@ -37,6 +40,14 @@ class Jogador:
         
     def set_peca_selecionada(self, peca: Peca) -> None:
         self.peca_selecionada = peca
+        
+    def pecas_fora_tabuleiro_vazio(self) -> None:
+        if len(self.pecas_fora_tabuleiro) == 0:
+            return True
+        for linha in self.pecas_fora_tabuleiro:
+            if len(linha) > 0:
+                return False
+        return True
         
     def instanciar_pecas(self) -> None:
         self.pecas_fora_tabuleiro = [[] for i in range(12)]

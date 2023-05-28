@@ -1,6 +1,5 @@
 from estado import Estado
-from jogador import Jogador
-from tabuleiro import Tabuleiro
+from tabuleiro import *
 from imageminterface import ImagemInterface
 
 
@@ -40,7 +39,7 @@ class Jogo:
                     if posicao.get_ocupante() == self.jogador_local:
                         tabuleiro_int[i][j] = peca.get_forca()
                     else:
-                        tabuleiro_int[i][j] = 13
+                        tabuleiro_int[i][j] = 12
                     
         print(tabuleiro_int)
 
@@ -68,7 +67,7 @@ class Jogo:
     def selecionar_posicao(self, linha: int, coluna: int, peca_fora_tabuleiro: bool) -> dict:
         jogada = None
         turno = self.jogador_local.get_turno()
-        if (self.estado == Estado.PREPARACAO or self.estado == Estado.COMBATE) and turno:
+        if (self.estado == Estado.PREPARACAO or (self.estado == Estado.COMBATE and turno)):
             posicao_selecionada = self.jogador_local.get_posicao_selecionada()
             peca_selecionada = self.jogador_local.get_peca_selecionada()
 
@@ -128,4 +127,34 @@ class Jogo:
     
     def espelhar_matriz(jogada: dict) -> dict:
         pass
-    #TODO
+        #TODO
+        
+    def terminar_preparacao(self) -> None:
+        jogada = {}
+        if self.estado == Estado.PREPARACAO and self.jogador_local.pecas_fora_tabuleiro_vazio():
+            self.estado = Estado.COMBATE
+            jogada["preparacao"] = True
+            jogada["bandeira_capturada"] = False
+            jogada["adversario_venceu_combate_pecas"] = False
+            
+            matriz = [[-1 for j in range(10)] for i in range(10)]
+            for i in range(6,10):
+                for j in range(10):
+                    peca = self.tabuleiro.get_posicao(i,j).get_peca()
+                    if peca is not None:
+                        matriz[9-i][9-j] = peca.get_forca()
+            jogada["lance_preparacao"] = matriz
+            jogada["lance_combate"] = None
+            jogada["match_status"] = "next"
+        return jogada
+            
+    def receber_jogada(self, jogada: dict) -> None:
+        if not jogada["bandeira_capturada"]:
+            if jogada["preparacao"]:
+                self.tabuleiro.alocar_pecas_adversario(jogada["lance_preparacao"], self.jogador_remoto)
+            else:
+                #TODO
+                pass
+            
+    def alocar_rapidamente(self) -> None:
+        self.tabuleiro.alocar_rapidamente(self.jogador_local)

@@ -58,8 +58,10 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         self.janela_principal.config(menu=self.barra_menu)
         self.barra_menu.add_command(label="Iniciar partida",
                                     command= lambda: self.start_match())
+        self.barra_menu.add_command(label="Alocar rapidamente",
+                                    command= lambda: self.alocar_rapidamente())
         self.barra_menu.add_command(label="Terminar preparação",
-                                    command= lambda: self.criar_popup("Partida ainda não iniciada."))
+                                    command= lambda: self.terminar_preparacao())
 
     def desenhar_frame_principal(self):
         self.borda_frame_principal = Frame(self.janela_principal,
@@ -267,7 +269,9 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         self.jogo.receber_inicio()
         
     def receive_move(self, a_move):
-        pass
+        self.jogo.receber_jogada(a_move)
+        status = self.jogo.obter_status()
+        self.atualizar_interface(status)
     
     def receive_withdrawal_notification(self):
         pass
@@ -316,5 +320,17 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         jogada = self.jogo.selecionar_posicao(linha, coluna, peca_fora_tabuleiro)
         if jogada != None:
             self.dog_server_interface.send_move(jogada)
+        status = self.jogo.obter_status()
+        self.atualizar_interface(status)
+        
+    def terminar_preparacao(self) -> None:
+        jogada = self.jogo.terminar_preparacao()
+        if jogada != {}:
+            self.dog_server_interface.send_move(jogada)
+            status = self.jogo.obter_status()
+            self.atualizar_interface(status)
+            
+    def alocar_rapidamente(self) -> None:
+        self.jogo.alocar_rapidamente()
         status = self.jogo.obter_status()
         self.atualizar_interface(status)

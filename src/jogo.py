@@ -149,10 +149,10 @@ class Jogo:
             jogada["lance_combate"] = None
             jogada["match_status"] = "next"
             
-        if self.exercito_adversario_recebido:
-            self.iniciar_combate()
-        else:
-            self.mensagem = "Aguardando oponente"
+            if self.exercito_adversario_recebido:
+                self.iniciar_combate()
+            else:
+                self.mensagem = "Aguardando oponente"
             
         return jogada
             

@@ -50,6 +50,9 @@ class Jogo:
         if posicao_selecionada is not None:
             linha, coluna = posicao_selecionada.get_coordenada()
             posicoes_selecionadas[linha][coluna] = 1
+            for i, j in self.jogador_local.get_posicoes_alcancaveis_posicao_selecionada():
+                posicoes_selecionadas[i][j] = 2
+
         
         print(posicoes_selecionadas)
 

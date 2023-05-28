@@ -13,6 +13,9 @@ class Jogador:
         self.posicoes_alcancaveis_posicao_selecionada = []
         self.peca_selecionada = None
         self.jogador2 = False
+    
+    def get_posicoes_alcancaveis_posicao_selecionada(self) -> list:
+        return self.posicoes_alcancaveis_posicao_selecionada
         
     def get_turno(self) -> bool:
         return self.turno
@@ -56,7 +59,7 @@ class Jogador:
         self.pecas_fora_tabuleiro = [[] for i in range(12)]
         for forca in range(12):
             for quantidade in range(quantidade_inicial[forca]):
-                if forca == 0 or forca == 12:
+                if forca == 0 or forca == 11:
                     casas_por_movimento = 0
                 elif forca == 2:
                     casas_por_movimento = 9

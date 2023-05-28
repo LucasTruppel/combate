@@ -10,6 +10,8 @@ class Jogo:
         self.tabuleiro = Tabuleiro()
         self.jogador_local = Jogador()
         self.jogador_remoto = Jogador()
+        self.exercito_adversario_recebido = False
+        self.exercito_enviado = False
         self.mensagem = ""
 
     def inicializar(self) -> None:
@@ -27,7 +29,7 @@ class Jogo:
 
     def continuar_inicio(self) -> None:
         self.estado = Estado.PREPARACAO
-        self.mensagem = "Clique em iniciar partida para jogar!"
+        self.mensagem = "Posicione suas peças e clique em terminar preparação!"
 
     def obter_status(self) -> ImagemInterface:
         tabuleiro_int = [[-1 for j in range(10)] for i in range(10)]
@@ -132,7 +134,7 @@ class Jogo:
     def terminar_preparacao(self) -> None:
         jogada = {}
         if self.estado == Estado.PREPARACAO and self.jogador_local.pecas_fora_tabuleiro_vazio():
-            self.estado = Estado.COMBATE
+            self.exercito_enviado = True
             jogada["preparacao"] = True
             jogada["bandeira_capturada"] = False
             jogada["adversario_venceu_combate_pecas"] = False
@@ -146,15 +148,31 @@ class Jogo:
             jogada["lance_preparacao"] = matriz
             jogada["lance_combate"] = None
             jogada["match_status"] = "next"
+            
+        if self.exercito_adversario_recebido:
+            self.iniciar_combate()
+        else:
+            self.mensagem = "Aguardando oponente"
+            
         return jogada
             
     def receber_jogada(self, jogada: dict) -> None:
         if not jogada["bandeira_capturada"]:
             if jogada["preparacao"]:
+                self.exercito_adversario_recebido = True
                 self.tabuleiro.alocar_pecas_adversario(jogada["lance_preparacao"], self.jogador_remoto)
+                
+                if self.exercito_enviado:
+                    self.iniciar_combate()
             else:
                 #TODO
                 pass
+    
+    def iniciar_combate(self) -> None:
+        self.estado = Estado.COMBATE
+        if not self.jogador_local.jogador2:
+            self.jogador_local.inverter_turno()
+        self.mensagem("Combate iniciado!")
             
     def alocar_rapidamente(self) -> None:
         self.tabuleiro.alocar_rapidamente(self.jogador_local)

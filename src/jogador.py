@@ -31,7 +31,10 @@ class Jogador:
         for lista_pecas in self.pecas_fora_tabuleiro:
             quantidades.append(len(lista_pecas))
         return quantidades
-        
+     
+    def get_jogador2(self) -> bool:
+        return self.jogador2
+       
     def set_jogador2(self, eh_jogador2: bool) -> None:
         self.jogador2 = eh_jogador2
         
@@ -78,6 +81,5 @@ class Jogador:
     def verificar_lances_possiveis(self, posicao: Posicao) -> None:
         pass
     
-        
-        
-        
+    def inverter_turno(self) -> None:
+        self.turno = not self.turno

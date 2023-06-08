@@ -46,6 +46,9 @@ class Jogador:
         
     def set_peca_selecionada(self, peca: Peca) -> None:
         self.peca_selecionada = peca
+
+    def set_posicoes_alcancaveis_posicao_selecionada(self, posicoes: list) -> None:
+        self.posicoes_alcancaveis_posicao_selecionada = posicoes
         
     def pecas_fora_tabuleiro_vazio(self) -> None:
         if len(self.pecas_fora_tabuleiro) == 0:
@@ -86,3 +89,4 @@ class Jogador:
     
     def inverter_turno(self) -> None:
         self.turno = not self.turno
+

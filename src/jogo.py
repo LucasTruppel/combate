@@ -1,6 +1,7 @@
 from estado import Estado
 from tabuleiro import *
 from imageminterface import ImagemInterface
+import pprint as p
 
 
 class Jogo:
@@ -42,8 +43,6 @@ class Jogo:
                         tabuleiro_int[i][j] = peca.get_forca()
                     else:
                         tabuleiro_int[i][j] = 12
-                    
-        print(tabuleiro_int)
 
         posicoes_selecionadas = [[0 for j in range(10)] for i in range(10)]
         posicao_selecionada = self.jogador_local.get_posicao_selecionada()
@@ -52,19 +51,13 @@ class Jogo:
             posicoes_selecionadas[linha][coluna] = 1
             for i, j in self.jogador_local.get_posicoes_alcancaveis_posicao_selecionada():
                 posicoes_selecionadas[i][j] = 2
-
-        
-        print(posicoes_selecionadas)
+        p.pprint(posicoes_selecionadas)
 
         # Peça de fora do tabuleiro selecionada
         peca_selecionada = self.jogador_local.get_peca_selecionada()
         forca_peca_selecionada = -1
         if peca_selecionada is not None:
             forca_peca_selecionada = peca_selecionada.get_forca()
-            
-        print(peca_selecionada)
-        
-        print(self.mensagem)
 
         return ImagemInterface(self.mensagem, tabuleiro_int, forca_peca_selecionada, posicoes_selecionadas,
                                self.jogador_local.get_quantidade_pecas_fora_tabuleiro())
@@ -72,7 +65,7 @@ class Jogo:
     def selecionar_posicao(self, linha: int, coluna: int, peca_fora_tabuleiro: bool) -> dict:
         jogada = None
         turno = self.jogador_local.get_turno()
-        if (self.estado == Estado.PREPARACAO or (self.estado == Estado.COMBATE and turno)):
+        if self.estado == Estado.PREPARACAO or (self.estado == Estado.COMBATE and turno):
             posicao_selecionada = self.jogador_local.get_posicao_selecionada()
             peca_selecionada = self.jogador_local.get_peca_selecionada()
 
@@ -94,7 +87,7 @@ class Jogo:
                 if casas_por_movimento > 0 or self.estado == Estado.PREPARACAO:
                     self.jogador_local.set_posicao_selecionada(posicao)
                     if self.estado == Estado.COMBATE:
-                        self.jogador_local.verificar_lances_possiveis()
+                        self.tabuleiro.verificar_lances_possiveis(posicao, self.jogador_local)
 
     def selecionar_destino(self, linha: int, coluna: int) -> dict:
         peca_selecionada = self.jogador_local.get_peca_selecionada()
@@ -124,8 +117,20 @@ class Jogo:
                 else:
                     self.jogador_local.set_posicao_selecionada(None)
         else:
-            pass
-            # TODO
+            if (linha, coluna) in self.jogador_local.get_posicoes_alcancaveis_posicao_selecionada():
+                if peca_destino is not None:
+                    self.comparar_pecas(peca_origem, peca_destino, linha, coluna)
+                else:
+                    posicao_destino.set_peca(peca_origem)
+                    posicao_destino.set_ocupante(self.jogador_local)
+                posicao_origem.set_peca(None)
+                posicao_origem.set_ocupante(None)
+                self.jogador_local.set_posicao_selecionada(None)
+                self.jogador_local.set_posicoes_alcancaveis_posicao_selecionada([])
+                self.jogador_local.inverter_turno()
+            else:
+                self.jogador_local.set_posicao_selecionada(None)
+                self.jogador_local.set_posicoes_alcancaveis_posicao_selecionada([])
 
     def inverter_posicao(self, i: int, j: int ) -> tuple:
         return 9 - i, 9 - j
@@ -134,7 +139,7 @@ class Jogo:
         pass
         #TODO
         
-    def terminar_preparacao(self) -> None:
+    def terminar_preparacao(self) -> dict:
         jogada = {}
         if self.estado == Estado.PREPARACAO and self.jogador_local.pecas_fora_tabuleiro_vazio():
             self.exercito_enviado = True
@@ -175,7 +180,10 @@ class Jogo:
         self.estado = Estado.COMBATE
         if not self.jogador_local.jogador2:
             self.jogador_local.inverter_turno()
-        self.mensagem("Combate iniciado!")
-            
+        self.mensagem = "Combate iniciado!"
+
     def alocar_rapidamente(self) -> None:
         self.tabuleiro.alocar_rapidamente(self.jogador_local)
+
+    def comparar_pecas(self, peca_origem, peca_destino, linha, coluna):
+        pass

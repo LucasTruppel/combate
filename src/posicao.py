@@ -14,6 +14,9 @@ class Posicao:
     
     def get_coordenada(self) -> tuple:
         return self.coordenada
+
+    def get_eh_lago(self) -> bool:
+        return self.eh_lago
     
     def set_peca(self, peca) -> None:
         self.peca = peca

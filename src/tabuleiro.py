@@ -44,10 +44,11 @@ class Tabuleiro:
         for i in range(6, 10):
             for j in range(10):
                 posicao = self.matriz_posicoes[i][j]
-                peca = pecas.pop()
-                posicao.set_ocupante(jogador)
-                posicao.set_peca(peca)
-                jogador.remover_peca_fora_tabuleiro(peca)
+                if posicao.get_peca() is None:
+                    peca = pecas.pop()
+                    posicao.set_ocupante(jogador)
+                    posicao.set_peca(peca)
+                    jogador.remover_peca_fora_tabuleiro(peca)
 
     def verificar_lances_possiveis(self, posicao: Posicao, jogador: Jogador) -> None:
         i_peca, j_peca = posicao.get_coordenada()

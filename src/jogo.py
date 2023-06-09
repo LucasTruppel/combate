@@ -1,7 +1,7 @@
 from estado import Estado
 from tabuleiro import *
 from imageminterface import ImagemInterface
-import pprint as p
+from pprint import pprint
 
 
 class Jogo:
@@ -41,7 +41,7 @@ class Jogo:
                 if peca is not None:
                     if posicao.get_ocupante() == self.jogador_local:
                         tabuleiro_int[i][j] = peca.get_forca()
-                    else:
+                    elif self.estado == Estado.COMBATE:
                         tabuleiro_int[i][j] = 12
 
         posicoes_selecionadas = [[0 for j in range(10)] for i in range(10)]
@@ -51,7 +51,7 @@ class Jogo:
             posicoes_selecionadas[linha][coluna] = 1
             for i, j in self.jogador_local.get_posicoes_alcancaveis_posicao_selecionada():
                 posicoes_selecionadas[i][j] = 2
-        p.pprint(posicoes_selecionadas)
+        pprint(posicoes_selecionadas)
 
         # Peça de fora do tabuleiro selecionada
         peca_selecionada = self.jogador_local.get_peca_selecionada()
@@ -63,7 +63,7 @@ class Jogo:
                                self.jogador_local.get_quantidade_pecas_fora_tabuleiro())
 
     def selecionar_posicao(self, linha: int, coluna: int, peca_fora_tabuleiro: bool) -> dict:
-        jogada = None
+        jogada = {}
         turno = self.jogador_local.get_turno()
         if self.estado == Estado.PREPARACAO or (self.estado == Estado.COMBATE and turno):
             posicao_selecionada = self.jogador_local.get_posicao_selecionada()
@@ -197,6 +197,7 @@ class Jogo:
 
     def alocar_rapidamente(self) -> None:
         self.tabuleiro.alocar_rapidamente(self.jogador_local)
+        pprint(self.jogador_local.get_pecas_fora_tabuleiro())
 
     def comparar_pecas(self, peca_local: Peca, peca_remoto: Peca, linha: int, coluna: int, jogada: dict):
         tipo_local = peca_local.get_tipo()

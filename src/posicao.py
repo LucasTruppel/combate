@@ -31,4 +31,3 @@ class Posicao:
     def desocupar(self) -> None:
         self.peca = None
         self.ocupante = None
-

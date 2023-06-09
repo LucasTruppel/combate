@@ -258,6 +258,8 @@ class InterfaceGraficaJogador(DogPlayerInterface):
             players = start_status.get_players()
             self.jogo.comecar_partida()
             messagebox.showinfo(message=message)
+            status = self.jogo.obter_status()
+            self.atualizar_interface(status)
 
     def receive_start(self, start_status) -> None:
         local_player_id = start_status.get_local_id()
@@ -267,6 +269,8 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         messagebox.showinfo(message=message)
 
         self.jogo.receber_inicio()
+        status = self.jogo.obter_status()
+        self.atualizar_interface(status)
         
     def receive_move(self, a_move):
         self.jogo.receber_jogada(a_move)
@@ -318,7 +322,8 @@ class InterfaceGraficaJogador(DogPlayerInterface):
                 
     def selecionar_posicao(self, linha: int, coluna: int, peca_fora_tabuleiro: bool) -> None:
         jogada = self.jogo.selecionar_posicao(linha, coluna, peca_fora_tabuleiro)
-        if jogada is not None:
+        print("JOGADA:  ", jogada)
+        if jogada != {}:
             self.dog_server_interface.send_move(jogada)
         status = self.jogo.obter_status()
         self.atualizar_interface(status)

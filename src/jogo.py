@@ -90,6 +90,7 @@ class Jogo:
                         self.tabuleiro.verificar_lances_possiveis(posicao, self.jogador_local)
 
     def selecionar_destino(self, linha: int, coluna: int) -> dict:
+        jogada = {}
         peca_selecionada = self.jogador_local.get_peca_selecionada()
         posicao_origem = self.jogador_local.get_posicao_selecionada()
         if posicao_origem is not None:
@@ -119,25 +120,43 @@ class Jogo:
         else:
             if (linha, coluna) in self.jogador_local.get_posicoes_alcancaveis_posicao_selecionada():
                 if peca_destino is not None:
-                    self.comparar_pecas(peca_origem, peca_destino, linha, coluna)
+                    self.comparar_pecas(peca_origem, peca_destino, linha, coluna, jogada)
                 else:
                     posicao_destino.set_peca(peca_origem)
                     posicao_destino.set_ocupante(self.jogador_local)
+                    jogada["info_combate_pecas"] = 0
+                    jogada["bandeira_capturada"] = False
                 posicao_origem.set_peca(None)
                 posicao_origem.set_ocupante(None)
                 self.jogador_local.set_posicao_selecionada(None)
                 self.jogador_local.set_posicoes_alcancaveis_posicao_selecionada([])
                 self.jogador_local.inverter_turno()
+                jogada["preparacao"] = False
+                jogada["lance_preparacao"] = None
+                jogada["lance_combate"] = [posicao_origem.get_coordenada(), posicao_destino.get_coordenada()]
+                jogada["match_status"] = "next"
+                self.espelhar_jogada(jogada)
             else:
                 self.jogador_local.set_posicao_selecionada(None)
                 self.jogador_local.set_posicoes_alcancaveis_posicao_selecionada([])
+        return jogada
 
-    def inverter_posicao(self, i: int, j: int ) -> tuple:
+    def inverter_posicao(self, coordenadas: tuple) -> tuple:
+        i, j = coordenadas
         return 9 - i, 9 - j
     
-    def espelhar_matriz(jogada: dict) -> dict:
-        pass
-        #TODO
+    def espelhar_jogada(self, jogada: dict) -> dict:
+        if jogada["preparacao"]:
+            matriz = [[-1 for j in range(10)] for i in range(10)]
+            for i in range(6, 10):
+                for j in range(10):
+                    peca = self.tabuleiro.get_posicao(i, j).get_peca()
+                    matriz[9 - i][9 - j] = peca.get_forca()
+            jogada["lance_preparacao"] = matriz
+        else:
+            jogada["lance_combate"][0] = self.inverter_posicao(jogada["lance_combate"][0])
+            jogada["lance_combate"][1] = self.inverter_posicao(jogada["lance_combate"][1])
+        return jogada
         
     def terminar_preparacao(self) -> dict:
         jogada = {}
@@ -146,22 +165,14 @@ class Jogo:
             jogada["preparacao"] = True
             jogada["bandeira_capturada"] = False
             jogada["adversario_venceu_combate_pecas"] = False
-            
-            matriz = [[-1 for j in range(10)] for i in range(10)]
-            for i in range(6,10):
-                for j in range(10):
-                    peca = self.tabuleiro.get_posicao(i,j).get_peca()
-                    if peca is not None:
-                        matriz[9-i][9-j] = peca.get_forca()
-            jogada["lance_preparacao"] = matriz
             jogada["lance_combate"] = None
             jogada["match_status"] = "next"
+            jogada = self.espelhar_jogada(jogada)
             
             if self.exercito_adversario_recebido:
                 self.iniciar_combate()
             else:
                 self.mensagem = "Aguardando oponente"
-            
         return jogada
             
     def receber_jogada(self, jogada: dict) -> None:
@@ -173,8 +184,10 @@ class Jogo:
                 if self.exercito_enviado:
                     self.iniciar_combate()
             else:
-                #TODO
-                pass
+                self.tabuleiro.atualizar_tabuleiro(jogada, self.jogador_local, self.jogador_remoto)
+                self.jogador_local.inverter_turno()
+        else:
+            self.finalizar()
     
     def iniciar_combate(self) -> None:
         self.estado = Estado.COMBATE
@@ -185,5 +198,56 @@ class Jogo:
     def alocar_rapidamente(self) -> None:
         self.tabuleiro.alocar_rapidamente(self.jogador_local)
 
-    def comparar_pecas(self, peca_origem, peca_destino, linha, coluna):
+    def comparar_pecas(self, peca_local: Peca, peca_remoto: Peca, linha: int, coluna: int, jogada: dict):
+        tipo_local = peca_local.get_tipo()
+        tipo_remoto = peca_remoto.get_tipo()
+        forca_local = peca_local.get_forca()
+        forca_remoto = peca_remoto.get_forca()
+        posicao_destino = self.tabuleiro.get_posicao(linha, coluna)
+
+        jogada["bandeira_capturada"] = False
+
+        if tipo_remoto == "Bandeira":
+            self.jogador_local.set_vencedor(True)
+            self.finalizar()
+            jogada["info_combate_pecas"] = 1
+            jogada["bandeira_capturada"] = True
+        elif tipo_remoto == "Bomba":
+            if tipo_local == "Cabo":
+                self.jogador_remoto.adicionar_peca_fora_tabuleiro(peca_remoto)
+                posicao_destino.ocupar(peca_local, self.jogador_local)
+                jogada["info_combate_pecas"] = 1
+            else:
+                self.jogador_local.adicionar_peca_fora_tabuleiro(peca_local)
+                self.jogador_remoto.adicionar_peca_fora_tabuleiro(peca_remoto)
+                posicao_destino.desocupar()
+                jogada["info_combate_pecas"] = 3
+        elif tipo_local == "Espião":
+            if tipo_remoto == "General":
+                self.jogador_remoto.adicionar_peca_fora_tabuleiro(peca_remoto)
+                posicao_destino.ocupar(peca_local, self.jogador_local)
+                jogada["info_combate_pecas"] = 1
+            elif tipo_remoto == "Espião":
+                self.jogador_local.adicionar_peca_fora_tabuleiro(peca_local)
+                self.jogador_remoto.adicionar_peca_fora_tabuleiro(peca_remoto)
+                posicao_destino.desocupar()
+                jogada["info_combate_pecas"] = 3
+            else:
+                self.jogador_local.adicionar_peca_fora_tabuleiro(peca_local)
+                jogada["info_combate_pecas"] = 2
+        else:
+            if forca_local > forca_remoto:
+                self.jogador_remoto.adicionar_peca_fora_tabuleiro(peca_remoto)
+                posicao_destino.ocupar(peca_local, self.jogador_local)
+                jogada["info_combate_pecas"] = 1
+            elif forca_local < forca_remoto:
+                self.jogador_local.adicionar_peca_fora_tabuleiro(peca_local)
+                jogada["info_combate_pecas"] = 2
+            else:
+                self.jogador_local.adicionar_peca_fora_tabuleiro(peca_local)
+                self.jogador_remoto.adicionar_peca_fora_tabuleiro(peca_remoto)
+                posicao_destino.desocupar()
+                jogada["info_combate_pecas"] = 3
+
+    def finalizar(self):
         pass

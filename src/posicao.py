@@ -21,5 +21,14 @@ class Posicao:
     def set_peca(self, peca) -> None:
         self.peca = peca
         
-    def set_ocupante(self, ocupante):
+    def set_ocupante(self, ocupante) -> None:
         self.ocupante = ocupante
+
+    def ocupar(self, peca, jogador) -> None:
+        self.peca = peca
+        self.ocupante = jogador
+
+    def desocupar(self) -> None:
+        self.peca = None
+        self.ocupante = None
+

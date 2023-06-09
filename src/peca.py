@@ -10,4 +10,7 @@ class Peca:
         
     def get_casas_por_movimento(self) -> int:
         return self.casas_por_movimento
+
+    def get_tipo(self) -> str:
+        return self.tipo
     

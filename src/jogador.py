@@ -49,6 +49,9 @@ class Jogador:
 
     def set_posicoes_alcancaveis_posicao_selecionada(self, posicoes: list) -> None:
         self.posicoes_alcancaveis_posicao_selecionada = posicoes
+
+    def set_vencedor(self, eh_vencedor: bool) -> None:
+        self.vencedor = eh_vencedor
         
     def pecas_fora_tabuleiro_vazio(self) -> None:
         if len(self.pecas_fora_tabuleiro) == 0:

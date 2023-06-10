@@ -52,6 +52,7 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         self.desenhar_pecas_direita()
         self.desenhar_pecas_esquerda()
         self.desenhar_mensagem("Clique em iniciar partida para jogar!")
+        self.desenhar_turno()
 
     def criar_menu(self):
         self.barra_menu = Menu(self.janela_principal)
@@ -219,6 +220,31 @@ class InterfaceGraficaJogador(DogPlayerInterface):
                                  y = 0
                                  )
 
+    def desenhar_nome_adversario(self, nome: str):
+
+        self.label_nome_adversario = Label(self.janela_principal,
+                                   bg="gray",
+                                   text=f"Adversário:\n{nome}",
+                                   font="arial 15"
+                                   )
+        self.label_nome_adversario.place(anchor="sw",
+                                         width=int(LARGURA * 0.23),
+                                         height=int(LARGURA * 0.05),
+                                         x=0,
+                                         y=ALTURA)
+
+    def desenhar_turno(self):
+
+        self.label_turno = Label(self.janela_principal,
+                                   bg="gray",
+                                   text="",
+                                   font="arial 15")
+        self.label_turno.place(anchor="sw",
+                               width=int(LARGURA * 0.23),
+                               height=int(LARGURA * 0.05),
+                               x=int(LARGURA * 0.77),
+                               y=ALTURA)
+
     def click(self, event, i, j, objeto):
         if objeto == objetoInterface.TABULEIRO.value:
             self.selecionar_posicao(i, j, False)
@@ -258,6 +284,8 @@ class InterfaceGraficaJogador(DogPlayerInterface):
             players = start_status.get_players()
             self.jogo.comecar_partida()
             messagebox.showinfo(message=message)
+
+            self.desenhar_nome_adversario(start_status.get_players()[1][0])
             status = self.jogo.obter_status()
             self.atualizar_interface(status)
 
@@ -271,6 +299,8 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         self.jogo.receber_inicio()
         status = self.jogo.obter_status()
         self.atualizar_interface(status)
+        print(players)
+        self.desenhar_nome_adversario(start_status.get_players()[1][0])
         
     def receive_move(self, a_move):
         self.jogo.receber_jogada(a_move)
@@ -319,14 +349,15 @@ class InterfaceGraficaJogador(DogPlayerInterface):
                 label_peca.config(bg = cor)
                 
         self.labelMensagem.config(text=status.mensagem)
+        self.label_turno.config(text=status.turno)
                 
     def selecionar_posicao(self, linha: int, coluna: int, peca_fora_tabuleiro: bool) -> None:
         jogada = self.jogo.selecionar_posicao(linha, coluna, peca_fora_tabuleiro)
-        print("JOGADA:  ", jogada)
-        if jogada != {}:
-            self.dog_server_interface.send_move(jogada)
         status = self.jogo.obter_status()
         self.atualizar_interface(status)
+        if jogada != {}:
+            self.dog_server_interface.send_move(jogada)
+
         
     def terminar_preparacao(self) -> None:
         jogada = self.jogo.terminar_preparacao()

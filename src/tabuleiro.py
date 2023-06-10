@@ -26,7 +26,7 @@ class Tabuleiro:
         pecas_fora_tabuleiro_adversario = jogador_adversario.get_pecas_fora_tabuleiro()
         for i in range(0, 4):
             for j in range(10):
-                forca_peca = matriz_adversario[i][j]
+                forca_peca = int(matriz_adversario[i][j])
                 posicao = self.matriz_posicoes[i][j]
                 peca = pecas_fora_tabuleiro_adversario[forca_peca][0]
                 posicao.set_ocupante(jogador_adversario)
@@ -63,7 +63,7 @@ class Tabuleiro:
                 break
             posicao_atual = self.matriz_posicoes[i][j]
             ocupante = posicao_atual.get_ocupante()
-            if ocupante == jogador or posicao.get_eh_lago():
+            if ocupante == jogador or posicao_atual.get_eh_lago():
                 break
             posicoes_alcancaveis.append((i, j))
             if ocupante is not None and ocupante != jogador:
@@ -77,7 +77,7 @@ class Tabuleiro:
                 break
             posicao_atual = self.matriz_posicoes[i][j]
             ocupante = posicao_atual.get_ocupante()
-            if ocupante == jogador or posicao.get_eh_lago():
+            if ocupante == jogador or posicao_atual.get_eh_lago():
                 break
             posicoes_alcancaveis.append((i, j))
             if ocupante is not None and ocupante != jogador:
@@ -91,7 +91,7 @@ class Tabuleiro:
                 break
             posicao_atual = self.matriz_posicoes[i][j]
             ocupante = posicao_atual.get_ocupante()
-            if ocupante == jogador or posicao.get_eh_lago():
+            if ocupante == jogador or posicao_atual.get_eh_lago():
                 break
             posicoes_alcancaveis.append((i, j))
             if ocupante is not None and ocupante != jogador:
@@ -105,7 +105,7 @@ class Tabuleiro:
                 break
             posicao_atual = self.matriz_posicoes[i][j]
             ocupante = posicao_atual.get_ocupante()
-            if ocupante == jogador or posicao.get_eh_lago():
+            if ocupante == jogador or posicao_atual.get_eh_lago():
                 break
             posicoes_alcancaveis.append((i, j))
             if ocupante is not None and ocupante != jogador:
@@ -113,22 +113,3 @@ class Tabuleiro:
 
         jogador.set_posicoes_alcancaveis_posicao_selecionada(posicoes_alcancaveis)
 
-    def atualizar_tabuleiro(self, jogada: dict, jogador_local: Jogador, jogador_remoto: Jogador) -> None:
-        x, y = jogada["lance_combate"][0]
-        w, z = jogada["lance_combate"][1]
-        posicao_origem = self.matriz_posicoes[x][y]
-        posicao_destino = self.matriz_posicoes[w][z]
-        peca_origem = posicao_origem.get_peca()
-        peca_destino = posicao_destino.get_peca()
-        if jogada["info_combate_pecas"] == 0:
-            posicao_destino.ocupar(peca_origem, jogador_remoto)
-        elif jogada["info_combate_pecas"] == 1:
-            posicao_destino.ocupar(peca_origem, jogador_remoto)
-            jogador_local.adicionar_peca_fora_tabuleiro(peca_destino)
-        elif jogada["info_combate_pecas"] == 2:
-            jogador_remoto.adicionar_peca_fora_tabuleiro(peca_origem)
-        elif jogada["info_combate_pecas"] == 3:
-            posicao_destino.desocupar()
-            jogador_remoto.adicionar_peca_fora_tabuleiro(peca_origem)
-            jogador_local.adicionar_peca_fora_tabuleiro(peca_destino)
-        posicao_origem.desocupar()

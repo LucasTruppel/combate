@@ -59,7 +59,12 @@ class Jogo:
         if peca_selecionada is not None:
             forca_peca_selecionada = peca_selecionada.get_forca()
 
-        return ImagemInterface(self.mensagem, tabuleiro_int, forca_peca_selecionada, posicoes_selecionadas,
+        if self.estado != Estado.COMBATE:
+            turno = ""
+        else:
+            turno = "Seu turno!" if self.jogador_local.get_turno() else "Turno do adversário."
+
+        return ImagemInterface(self.mensagem, turno, tabuleiro_int, forca_peca_selecionada, posicoes_selecionadas,
                                self.jogador_local.get_quantidade_pecas_fora_tabuleiro())
 
     def selecionar_posicao(self, linha: int, coluna: int, peca_fora_tabuleiro: bool) -> dict:
@@ -124,6 +129,7 @@ class Jogo:
                 else:
                     posicao_destino.set_peca(peca_origem)
                     posicao_destino.set_ocupante(self.jogador_local)
+                    self.mensagem = f"Seu {peca_origem.get_tipo()} se moveu."
                     jogada["info_combate_pecas"] = 0
                     jogada["bandeira_capturada"] = False
                 posicao_origem.set_peca(None)
@@ -134,7 +140,10 @@ class Jogo:
                 jogada["preparacao"] = False
                 jogada["lance_preparacao"] = None
                 jogada["lance_combate"] = [posicao_origem.get_coordenada(), posicao_destino.get_coordenada()]
-                jogada["match_status"] = "next"
+                if not jogada["bandeira_capturada"]:
+                    jogada["match_status"] = "next"
+                else:
+                    jogada["match_status"] = "finished"
                 self.espelhar_jogada(jogada)
             else:
                 self.jogador_local.set_posicao_selecionada(None)
@@ -176,15 +185,15 @@ class Jogo:
         return jogada
             
     def receber_jogada(self, jogada: dict) -> None:
-        if not jogada["bandeira_capturada"]:
-            if jogada["preparacao"]:
+        if not bool(jogada["bandeira_capturada"]):
+            if bool(jogada["preparacao"]):
                 self.exercito_adversario_recebido = True
                 self.tabuleiro.alocar_pecas_adversario(jogada["lance_preparacao"], self.jogador_remoto)
                 
                 if self.exercito_enviado:
                     self.iniciar_combate()
             else:
-                self.tabuleiro.atualizar_tabuleiro(jogada, self.jogador_local, self.jogador_remoto)
+                self.atualizar_tabuleiro(jogada)
                 self.jogador_local.inverter_turno()
         else:
             self.finalizar()
@@ -250,5 +259,37 @@ class Jogo:
                 posicao_destino.desocupar()
                 jogada["info_combate_pecas"] = 3
 
+        texto_vencedor = {1: "você!", 2: "adversário!", 3: "nenhum!"}
+        self.mensagem = f'Seu {peca_local.get_tipo()} atacou um {peca_remoto.get_tipo()} do adversário. Vencedor: ' \
+                        f'{texto_vencedor[jogada["info_combate_pecas"]]}'
+
+    def atualizar_tabuleiro(self, jogada: dict) -> None:
+        x, y = jogada["lance_combate"][0]
+        w, z = jogada["lance_combate"][1]
+        posicao_origem = self.tabuleiro.get_posicao(x, y)
+        posicao_destino = self.tabuleiro.get_posicao(w, z)
+        peca_origem = posicao_origem.get_peca()
+        peca_destino = posicao_destino.get_peca()
+        if jogada["info_combate_pecas"] == 0:
+            posicao_destino.ocupar(peca_origem, self.jogador_remoto)
+            self.mensagem = "Uma peça do adversário se moveu."
+        elif jogada["info_combate_pecas"] == 1:
+            posicao_destino.ocupar(peca_origem, self.jogador_remoto)
+            self.jogador_local.adicionar_peca_fora_tabuleiro(peca_destino)
+            self.mensagem = f"Seu {peca_destino.get_tipo()} foi atacado por um {peca_origem.get_tipo()} do " \
+                            f"adversário. Vencedor: adversário."
+        elif jogada["info_combate_pecas"] == 2:
+            self.jogador_remoto.adicionar_peca_fora_tabuleiro(peca_origem)
+            self.mensagem = f"Seu {peca_destino.get_tipo()} foi atacado por um {peca_origem.get_tipo()} do " \
+                            f"adversário. Vencedor: você."
+        elif jogada["info_combate_pecas"] == 3:
+            posicao_destino.desocupar()
+            self.jogador_remoto.adicionar_peca_fora_tabuleiro(peca_origem)
+            self.jogador_local.adicionar_peca_fora_tabuleiro(peca_destino)
+            self.mensagem = f"Seu {peca_destino.get_tipo()} foi atacado por um {peca_origem.get_tipo()} do " \
+                            f"adversário. Vencedor: nenhum."
+        posicao_origem.desocupar()
+
     def finalizar(self):
-        pass
+        vencedor = "Você" if self.jogador_local.get_vencedor() else "O adversário"
+        self.mensagem = f"{vencedor} venceu!"

@@ -37,6 +37,9 @@ class Jogador:
      
     def get_jogador2(self) -> bool:
         return self.jogador2
+
+    def get_vencedor(self) -> bool:
+        return self.vencedor
        
     def set_jogador2(self, eh_jogador2: bool) -> None:
         self.jogador2 = eh_jogador2

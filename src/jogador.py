@@ -96,3 +96,10 @@ class Jogador:
     
     def inverter_turno(self) -> None:
         self.turno = not self.turno
+
+    def reiniciar(self):
+        self.turno = False
+        self.vencedor = False
+        self.posicao_selecionada = None
+        self.posicoes_alcancaveis_posicao_selecionada = []
+        self.peca_selecionada = None

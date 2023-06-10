@@ -316,7 +316,6 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         self.jogo.receber_inicio()
         status = self.jogo.obter_status()
         self.atualizar_interface(status)
-        print(players)
         self.desenhar_nome_adversario(start_status.get_players()[1][0])
 
     def receive_move(self, a_move):

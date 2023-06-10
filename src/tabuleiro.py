@@ -53,6 +53,7 @@ class Tabuleiro:
     def verificar_lances_possiveis(self, posicao: Posicao, jogador: Jogador) -> None:
         i_peca, j_peca = posicao.get_coordenada()
         casas_por_movimento = posicao.get_peca().get_casas_por_movimento()
+        tipo_peca = posicao.get_peca().get_tipo()
         posicoes_alcancaveis = []
 
         # Cima
@@ -67,6 +68,8 @@ class Tabuleiro:
                 break
             posicoes_alcancaveis.append((i, j))
             if ocupante is not None and ocupante != jogador:
+                if tipo_peca == "Soldado" and k > 1:
+                    posicoes_alcancaveis.remove((i, j))
                 break
 
         # Direita
@@ -81,6 +84,8 @@ class Tabuleiro:
                 break
             posicoes_alcancaveis.append((i, j))
             if ocupante is not None and ocupante != jogador:
+                if tipo_peca == "Soldado" and k > 1:
+                    posicoes_alcancaveis.remove((i, j))
                 break
 
         # Baixo
@@ -95,6 +100,8 @@ class Tabuleiro:
                 break
             posicoes_alcancaveis.append((i, j))
             if ocupante is not None and ocupante != jogador:
+                if tipo_peca == "Soldado" and k > 1:
+                    posicoes_alcancaveis.remove((i, j))
                 break
 
         # Esquerda
@@ -109,6 +116,8 @@ class Tabuleiro:
                 break
             posicoes_alcancaveis.append((i, j))
             if ocupante is not None and ocupante != jogador:
+                if tipo_peca == "Soldado" and k > 1:
+                    posicoes_alcancaveis.remove((i, j))
                 break
 
         jogador.set_posicoes_alcancaveis_posicao_selecionada(posicoes_alcancaveis)

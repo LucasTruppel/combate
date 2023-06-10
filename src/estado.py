@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class Estado(Enum):
     NAO_COMECOU = 0
     PREPARACAO = 1

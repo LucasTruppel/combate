@@ -1,9 +1,9 @@
 class Posicao:
     
     def __init__(self, ocupante, i: int, j: int, peca, eh_lago: bool) -> None:
-        self.ocupante = None
+        self.ocupante = ocupante
         self.coordenada = (i, j)
-        self.peca = None
+        self.peca = peca
         self.eh_lago = eh_lago
         
     def get_ocupante(self):

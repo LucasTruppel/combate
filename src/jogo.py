@@ -33,7 +33,7 @@ class Jogo:
         self.mensagem = "Posicione suas peças e clique em terminar preparação!"
 
     def obter_status(self) -> ImagemInterface:
-        tabuleiro_int = [[-1 for j in range(10)] for i in range(10)]
+        tabuleiro_int = [[-1 for _ in range(10)] for _ in range(10)]
         for i in range(10):
             for j in range(10):
                 posicao = self.tabuleiro.get_posicao(i, j)
@@ -44,7 +44,7 @@ class Jogo:
                     elif self.estado == Estado.COMBATE:
                         tabuleiro_int[i][j] = 12
 
-        posicoes_selecionadas = [[0 for j in range(10)] for i in range(10)]
+        posicoes_selecionadas = [[0 for _ in range(10)] for _ in range(10)]
         posicao_selecionada = self.jogador_local.get_posicao_selecionada()
         if posicao_selecionada is not None:
             linha, coluna = posicao_selecionada.get_coordenada()
@@ -156,7 +156,7 @@ class Jogo:
     
     def espelhar_jogada(self, jogada: dict) -> dict:
         if jogada["preparacao"]:
-            matriz = [[-1 for j in range(10)] for i in range(10)]
+            matriz = [[-1 for _ in range(10)] for _ in range(10)]
             for i in range(6, 10):
                 for j in range(10):
                     peca = self.tabuleiro.get_posicao(i, j).get_peca()

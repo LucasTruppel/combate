@@ -2,6 +2,7 @@ from peca import Peca
 from posicao import Posicao
 from constantes import quantidade_inicial, nome_peca
 
+
 class Jogador:
     
     def __init__(self) -> None:
@@ -56,7 +57,7 @@ class Jogador:
     def set_vencedor(self, eh_vencedor: bool) -> None:
         self.vencedor = eh_vencedor
         
-    def pecas_fora_tabuleiro_vazio(self) -> None:
+    def pecas_fora_tabuleiro_vazio(self) -> bool:
         if len(self.pecas_fora_tabuleiro) == 0:
             return True
         for linha in self.pecas_fora_tabuleiro:
@@ -65,7 +66,7 @@ class Jogador:
         return True
         
     def instanciar_pecas(self) -> None:
-        self.pecas_fora_tabuleiro = [[] for i in range(12)]
+        self.pecas_fora_tabuleiro = [[] for _ in range(12)]
         for forca in range(12):
             for quantidade in range(quantidade_inicial[forca]):
                 if forca == 0 or forca == 11:
@@ -95,4 +96,3 @@ class Jogador:
     
     def inverter_turno(self) -> None:
         self.turno = not self.turno
-

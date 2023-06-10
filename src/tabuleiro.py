@@ -14,7 +14,7 @@ class Tabuleiro:
         return self.matriz_posicoes
 
     def iniciar_tabuleiro(self) -> None:
-        self.matriz_posicoes = [[None for j in range(10)] for i in range(10)]
+        self.matriz_posicoes = [[None for _ in range(10)] for _ in range(10)]
         for i in range(10):
             for j in range(10):
                 if (i == 4 or i == 5) and (j == 2 or j == 3 or j == 6 or j == 7):
@@ -39,7 +39,7 @@ class Tabuleiro:
             for peca in lista_pecas:
                 pecas.append(peca)
         shuffle(pecas)
-        pecas_fora_tabuleiro = [[] for i in range(12)]
+        pecas_fora_tabuleiro = [[] for _ in range(12)]
 
         for i in range(6, 10):
             for j in range(10):
@@ -112,4 +112,3 @@ class Tabuleiro:
                 break
 
         jogador.set_posicoes_alcancaveis_posicao_selecionada(posicoes_alcancaveis)
-

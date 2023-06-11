@@ -69,14 +69,12 @@ class Jogador:
         self.pecas_fora_tabuleiro = [[] for _ in range(12)]
         for forca in range(12):
             for quantidade in range(quantidade_inicial[forca]):
-                if forca == 1:
-                    casas_por_movimento = 9
-                elif forca == 0 or forca == 11:
+                if forca == 0 or forca == 11:
                     casas_por_movimento = 0
                 elif forca == 2:
-                    casas_por_movimento = 0
+                    casas_por_movimento = 9
                 else:
-                    casas_por_movimento = 0
+                    casas_por_movimento = 1
                 self.pecas_fora_tabuleiro[forca].append(Peca(forca, nome_peca[forca], casas_por_movimento))
                 
     def selecionar_peca_fora_tabuleiro(self, linha: int, coluna: int) -> None:

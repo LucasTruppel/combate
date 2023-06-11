@@ -176,7 +176,7 @@ class Jogo:
                 jogada["preparacao"] = False
                 jogada["lance_preparacao"] = None
                 jogada["lance_combate"] = [posicao_origem.get_coordenada(), posicao_destino.get_coordenada()]
-                jogada["info_fim_pecas"] = 0
+                self.avaliar_fim_pecas(jogada)
                 if not jogada["bandeira_capturada"] and jogada["info_fim_pecas"] == 0:
                     jogada["match_status"] = "next"
                 else:
@@ -233,6 +233,10 @@ class Jogo:
                 if int(jogada["info_fim_pecas"]) == 0:
                     self.jogador_local.inverter_turno()
                 else:
+                    if int(jogada["info_fim_pecas"]) == 1:
+                        self.jogador_remoto.set_vencedor(True)
+                    elif int(jogada["info_fim_pecas"]) == 2:
+                        self.jogador_local.set_vencedor(True)
                     self.finalizar(acabaram_pecas=True)
         else:
             self.finalizar()
@@ -304,23 +308,21 @@ class Jogo:
             self.mensagem = f'Seu {peca_local.get_tipo()} atacou um {peca_remoto.get_tipo()} do adversário. ' \
                             f'Vencedor: {texto_vencedor[jogada["info_combate_pecas"]]}'
 
-        self.avaliar_fim_pecas(jogada)
-
     def avaliar_fim_pecas(self, jogada: dict):
         jogada["info_fim_pecas"] = 0
         acabaram_pecas_local = self.tabuleiro.pecas_moveis_acabaram(self.jogador_local)
         acabaram_pecas_remoto = self.tabuleiro.pecas_moveis_acabaram(self.jogador_remoto)
         if acabaram_pecas_local and acabaram_pecas_remoto:
             jogada["info_fim_pecas"] = 3
-            self.finalizar()
+            self.finalizar(acabaram_pecas=True)
         elif acabaram_pecas_local:
-            jogada["info_fim_pecas"] = 1
-            self.jogador_remoto.set_vencedor(True)
-            self.finalizar()
-        elif acabaram_pecas_remoto:
             jogada["info_fim_pecas"] = 2
+            self.jogador_remoto.set_vencedor(True)
+            self.finalizar(acabaram_pecas=True)
+        elif acabaram_pecas_remoto:
+            jogada["info_fim_pecas"] = 1
             self.jogador_local.set_vencedor(True)
-            self.finalizar()
+            self.finalizar(acabaram_pecas=True)
 
     def atualizar_tabuleiro(self, jogada: dict) -> None:
         x, y = jogada["lance_combate"][0]

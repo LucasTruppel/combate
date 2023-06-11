@@ -13,7 +13,7 @@ nome_peca = {
     8: "Major",
     9: "Coronel",
     10: "General",
-    11: "Bomba",
+    11: "Explosivo",
     12: "Peça Oculta"
 }
 

@@ -222,25 +222,25 @@ class Jogo:
         return jogada
             
     def receber_jogada(self, jogada: dict) -> None:
-        if not bool(jogada["bandeira_capturada"]):
-            if bool(jogada["preparacao"]):
-                self.exercito_adversario_recebido = True
-                self.tabuleiro.alocar_pecas_adversario(jogada["lance_preparacao"], self.jogador_remoto)
-                if self.exercito_enviado:
-                    self.iniciar_combate()
-            else:
-                self.atualizar_tabuleiro(jogada)
-                if int(jogada["info_fim_pecas"]) == 0:
-                    self.jogador_local.inverter_turno()
-                else:
-                    if int(jogada["info_fim_pecas"]) == 1:
-                        self.jogador_remoto.set_vencedor(True)
-                    elif int(jogada["info_fim_pecas"]) == 2:
-                        self.jogador_local.set_vencedor(True)
-                    self.finalizar(acabaram_pecas=True)
-        else:
+        if bool(jogada["preparacao"]):
+            self.exercito_adversario_recebido = True
+            self.tabuleiro.alocar_pecas_adversario(jogada["lance_preparacao"], self.jogador_remoto)
+            if self.exercito_enviado:
+                self.iniciar_combate()
+        elif bool(jogada["bandeira_capturada"]):
+            self.atualizar_tabuleiro(jogada)
             self.finalizar()
-    
+        elif int(jogada["info_fim_pecas"]) != 0:
+            self.atualizar_tabuleiro(jogada)
+            if int(jogada["info_fim_pecas"]) == 1:
+                self.jogador_remoto.set_vencedor(True)
+            elif int(jogada["info_fim_pecas"]) == 2:
+                self.jogador_local.set_vencedor(True)
+            self.finalizar(acabaram_pecas=True)
+        else:
+            self.atualizar_tabuleiro(jogada)
+            self.jogador_local.inverter_turno()
+
     def iniciar_combate(self) -> None:
         self.estado = Estado.COMBATE
         if not self.jogador_local.jogador2:
@@ -266,7 +266,7 @@ class Jogo:
             self.finalizar()
             jogada["info_combate_pecas"] = 1
             jogada["bandeira_capturada"] = True
-        elif tipo_remoto == "Bomba":
+        elif tipo_remoto == "Explosivo":
             if tipo_local == "Cabo":
                 self.jogador_remoto.adicionar_peca_fora_tabuleiro(peca_remoto)
                 posicao_destino.ocupar(peca_local, self.jogador_local)

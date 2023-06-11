@@ -121,3 +121,16 @@ class Tabuleiro:
                 break
 
         jogador.set_posicoes_alcancaveis_posicao_selecionada(posicoes_alcancaveis)
+
+    def pecas_moveis_acabaram(self, jogador) -> bool:
+        pecas_acabaram = True
+        for i in range(9, -1, -1):
+            for j in range(9, -1, -1):
+                posicao = self.matriz_posicoes[i][j]
+                peca = posicao.get_peca()
+                if peca is not None and posicao.get_ocupante() == jogador and peca.get_casas_por_movimento() > 0:
+                    pecas_acabaram = False
+                    break
+            if not pecas_acabaram:
+                break
+        return pecas_acabaram

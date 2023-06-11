@@ -1,7 +1,6 @@
 from estado import Estado
 from tabuleiro import *
 from imageminterface import ImagemInterface
-from pprint import pprint
 
 
 class Jogo:
@@ -14,6 +13,9 @@ class Jogo:
         self.exercito_adversario_recebido = False
         self.exercito_enviado = False
         self.mensagem = "Clique em iniciar partida para jogar!"
+
+    def get_estado(self):
+        return self.estado
 
     def inicializar(self) -> None:
         self.tabuleiro.iniciar_tabuleiro()
@@ -36,12 +38,24 @@ class Jogo:
         self.estado = Estado.PREPARACAO
         self.mensagem = "Posicione suas peças e clique em terminar preparação!"
 
-    def finalizar(self):
+    def receber_desistencia(self) -> None:
         self.estado = Estado.FIM_DE_JOGO
-        vencedor = "Você" if self.jogador_local.get_vencedor() else "O adversário"
-        self.mensagem = f"{vencedor} venceu a partida!"
+        self.mensagem = f"Seu oponente desistiu. Você venceu a partida!"
 
-    def reiniciar(self):
+    def finalizar(self, acabaram_pecas: bool = False) -> None:
+        self.estado = Estado.FIM_DE_JOGO
+        if not acabaram_pecas:
+            resultado = "venceu" if self.jogador_local.get_vencedor() else "perdeu"
+            self.mensagem = f"Bandeira capturada! Você {resultado} a partida."
+        else:
+            if not self.jogador_local.get_vencedor() and not self.jogador_remoto.get_vencedor():
+                self.mensagem = "Ambos jogadores sem peças móveis. Empate."
+            elif self.jogador_local.get_vencedor():
+                self.mensagem = "As peças móveis do adversário acabaram. Você venceu a partida."
+            else:
+                self.mensagem = "Suas peças móveis acabaram. Você perdeu a partida."
+
+    def reiniciar(self) -> None:
         for i in range(10):
             for j in range(10):
                 posicao = self.tabuleiro.get_posicao(i, j)
@@ -74,7 +88,6 @@ class Jogo:
             posicoes_selecionadas[linha][coluna] = 1
             for i, j in self.jogador_local.get_posicoes_alcancaveis_posicao_selecionada():
                 posicoes_selecionadas[i][j] = 2
-        pprint(posicoes_selecionadas)
 
         # Peça de fora do tabuleiro selecionada
         peca_selecionada = self.jogador_local.get_peca_selecionada()
@@ -163,7 +176,8 @@ class Jogo:
                 jogada["preparacao"] = False
                 jogada["lance_preparacao"] = None
                 jogada["lance_combate"] = [posicao_origem.get_coordenada(), posicao_destino.get_coordenada()]
-                if not jogada["bandeira_capturada"]:
+                jogada["info_fim_pecas"] = 0
+                if not jogada["bandeira_capturada"] and jogada["info_fim_pecas"] == 0:
                     jogada["match_status"] = "next"
                 else:
                     jogada["match_status"] = "finished"
@@ -212,12 +226,14 @@ class Jogo:
             if bool(jogada["preparacao"]):
                 self.exercito_adversario_recebido = True
                 self.tabuleiro.alocar_pecas_adversario(jogada["lance_preparacao"], self.jogador_remoto)
-                
                 if self.exercito_enviado:
                     self.iniciar_combate()
             else:
                 self.atualizar_tabuleiro(jogada)
-                self.jogador_local.inverter_turno()
+                if int(jogada["info_fim_pecas"]) == 0:
+                    self.jogador_local.inverter_turno()
+                else:
+                    self.finalizar(acabaram_pecas=True)
         else:
             self.finalizar()
     
@@ -229,7 +245,6 @@ class Jogo:
 
     def alocar_rapidamente(self) -> None:
         self.tabuleiro.alocar_rapidamente(self.jogador_local)
-        pprint(self.jogador_local.get_pecas_fora_tabuleiro())
 
     def comparar_pecas(self, peca_local: Peca, peca_remoto: Peca, linha: int, coluna: int, jogada: dict):
         tipo_local = peca_local.get_tipo()
@@ -288,6 +303,24 @@ class Jogo:
             texto_vencedor = {1: "você!", 2: "adversário!", 3: "nenhum!"}
             self.mensagem = f'Seu {peca_local.get_tipo()} atacou um {peca_remoto.get_tipo()} do adversário. ' \
                             f'Vencedor: {texto_vencedor[jogada["info_combate_pecas"]]}'
+
+        self.avaliar_fim_pecas(jogada)
+
+    def avaliar_fim_pecas(self, jogada: dict):
+        jogada["info_fim_pecas"] = 0
+        acabaram_pecas_local = self.tabuleiro.pecas_moveis_acabaram(self.jogador_local)
+        acabaram_pecas_remoto = self.tabuleiro.pecas_moveis_acabaram(self.jogador_remoto)
+        if acabaram_pecas_local and acabaram_pecas_remoto:
+            jogada["info_fim_pecas"] = 3
+            self.finalizar()
+        elif acabaram_pecas_local:
+            jogada["info_fim_pecas"] = 1
+            self.jogador_remoto.set_vencedor(True)
+            self.finalizar()
+        elif acabaram_pecas_remoto:
+            jogada["info_fim_pecas"] = 2
+            self.jogador_local.set_vencedor(True)
+            self.finalizar()
 
     def atualizar_tabuleiro(self, jogada: dict) -> None:
         x, y = jogada["lance_combate"][0]

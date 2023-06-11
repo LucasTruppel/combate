@@ -6,7 +6,7 @@ from dog.dog_actor import DogActor
 from constantes import *
 from ObjetoInterface import ObjetoInterface
 from PIL import Image, ImageTk
-from jogo import Jogo
+from jogo import Jogo, Estado
 from imageminterface import ImagemInterface
 
 
@@ -290,21 +290,25 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         Button(popup, text="Fechar", command=popup.destroy).pack()
 
     def start_match(self) -> None:
-        start_status = self.dog_server_interface.start_match(2)
-        code = start_status.get_code()
-        message = start_status.get_message()
+        estado = self.jogo.get_estado()
+        if estado == Estado.NAO_COMECOU or estado == Estado.FIM_DE_JOGO:
+            start_status = self.dog_server_interface.start_match(2)
+            code = start_status.get_code()
+            message = start_status.get_message()
 
-        if code == "0" or code == "1":
-            messagebox.showinfo(message=message)
-        elif code == "2":
-            local_player_id = start_status.get_local_id()
-            players = start_status.get_players()
-            self.jogo.comecar_partida()
-            messagebox.showinfo(message=message)
+            if code == "0" or code == "1":
+                messagebox.showinfo(message=message)
+            elif code == "2":
+                local_player_id = start_status.get_local_id()
+                players = start_status.get_players()
+                self.jogo.comecar_partida()
+                messagebox.showinfo(message=message)
 
-            self.desenhar_nome_adversario(start_status.get_players()[1][0])
-            status = self.jogo.obter_status()
-            self.atualizar_interface(status)
+                self.desenhar_nome_adversario(start_status.get_players()[1][0])
+                status = self.jogo.obter_status()
+                self.atualizar_interface(status)
+        else:
+            messagebox.showinfo(message="Você já está em uma partida.")
 
     def receive_start(self, start_status) -> None:
         local_player_id = start_status.get_local_id()
@@ -324,7 +328,38 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         self.atualizar_interface(status)
 
     def receive_withdrawal_notification(self):
-        pass
+        self.jogo.receber_desistencia()
+        status = self.jogo.obter_status()
+        self.atualizar_interface(status)
+
+    def selecionar_posicao(self, linha: int, coluna: int, peca_fora_tabuleiro: bool) -> None:
+        jogada = self.jogo.selecionar_posicao(linha, coluna, peca_fora_tabuleiro)
+        status = self.jogo.obter_status()
+        self.atualizar_interface(status)
+        if jogada != {}:
+            self.dog_server_interface.send_move(jogada)
+
+    def terminar_preparacao(self) -> None:
+        estado = self.jogo.get_estado()
+        if estado == Estado.PREPARACAO:
+            jogada = self.jogo.terminar_preparacao()
+            if jogada != {}:
+                self.dog_server_interface.send_move(jogada)
+                status = self.jogo.obter_status()
+                self.atualizar_interface(status)
+            else:
+                messagebox.showinfo(message="Você não posicionou todas as suas peças.")
+        else:
+            messagebox.showinfo(message="Você não está em preparação.")
+
+    def alocar_rapidamente(self) -> None:
+        estado = self.jogo.get_estado()
+        if estado == Estado.PREPARACAO:
+            self.jogo.alocar_rapidamente()
+            status = self.jogo.obter_status()
+            self.atualizar_interface(status)
+        else:
+            messagebox.showinfo(message="Você não está em preparação.")
 
     def atualizar_interface(self, status: ImagemInterface) -> None:
         for i in range(10):
@@ -367,21 +402,3 @@ class InterfaceGraficaJogador(DogPlayerInterface):
         self.labelMensagem.config(text=status.mensagem)
         self.label_turno.config(text=status.turno)
 
-    def selecionar_posicao(self, linha: int, coluna: int, peca_fora_tabuleiro: bool) -> None:
-        jogada = self.jogo.selecionar_posicao(linha, coluna, peca_fora_tabuleiro)
-        status = self.jogo.obter_status()
-        self.atualizar_interface(status)
-        if jogada != {}:
-            self.dog_server_interface.send_move(jogada)
-
-    def terminar_preparacao(self) -> None:
-        jogada = self.jogo.terminar_preparacao()
-        if jogada != {}:
-            self.dog_server_interface.send_move(jogada)
-            status = self.jogo.obter_status()
-            self.atualizar_interface(status)
-
-    def alocar_rapidamente(self) -> None:
-        self.jogo.alocar_rapidamente()
-        status = self.jogo.obter_status()
-        self.atualizar_interface(status)

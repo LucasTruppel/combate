@@ -144,16 +144,14 @@ class Jogo:
         if self.estado == Estado.PREPARACAO:
             if peca_selecionada is not None:
                 if peca_destino is None and 6 <= linha < 10:
-                    posicao_destino.set_peca(peca_selecionada)
+                    posicao_destino.ocupar(peca_selecionada, self.jogador_local)
                     self.jogador_local.remover_peca_fora_tabuleiro(peca_selecionada)
-                    posicao_destino.set_ocupante(self.jogador_local)
                     self.jogador_local.set_peca_selecionada(None)
                 else:
                     self.jogador_local.set_peca_selecionada(None)
             else:
                 if posicao_origem == posicao_destino:
-                    posicao_destino.set_peca(None)
-                    posicao_destino.set_ocupante(None)
+                    posicao_destino.desocupar()
                     self.jogador_local.adicionar_peca_fora_tabuleiro(peca_origem)
                     self.jogador_local.set_posicao_selecionada(None)
                 else:
@@ -163,13 +161,11 @@ class Jogo:
                 if peca_destino is not None:
                     self.comparar_pecas(peca_origem, peca_destino, linha, coluna, jogada)
                 else:
-                    posicao_destino.set_peca(peca_origem)
-                    posicao_destino.set_ocupante(self.jogador_local)
+                    posicao_destino.ocupar(peca_origem, self.jogador_local)
                     self.mensagem = f"Seu {peca_origem.get_tipo()} se moveu."
                     jogada["info_combate_pecas"] = 0
                     jogada["bandeira_capturada"] = False
-                posicao_origem.set_peca(None)
-                posicao_origem.set_ocupante(None)
+                posicao_origem.desocupar()
                 self.jogador_local.set_posicao_selecionada(None)
                 self.jogador_local.set_posicoes_alcancaveis_posicao_selecionada([])
                 self.jogador_local.inverter_turno()

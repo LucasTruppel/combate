@@ -281,14 +281,6 @@ class InterfaceGraficaJogador(DogPlayerInterface):
     def criar_texto_peca(self, peca, quantidade):
         return nome_peca[peca] + "\nF: " + str(peca) + "\nD: " + str(quantidade)
 
-    def criar_popup(self, texto):
-        popup = Toplevel(self.janela_principal)
-        popup.geometry(f"{LARGURA // 4}x{ALTURA // 4}")
-        popup.title("Aviso")
-        popup.resizable(False, False)
-        Label(popup, text=texto, font="Arial 18").pack(pady=ALTURA // 16)
-        Button(popup, text="Fechar", command=popup.destroy).pack()
-
     def start_match(self) -> None:
         estado = self.jogo.get_estado()
         if estado == Estado.NAO_COMECOU or estado == Estado.FIM_DE_JOGO:
@@ -299,28 +291,23 @@ class InterfaceGraficaJogador(DogPlayerInterface):
             if code == "0" or code == "1":
                 messagebox.showinfo(message=message)
             elif code == "2":
-                local_player_id = start_status.get_local_id()
-                players = start_status.get_players()
                 self.jogo.comecar_partida()
                 messagebox.showinfo(message=message)
-
-                self.desenhar_nome_adversario(start_status.get_players()[1][0])
+                players = start_status.get_players()
+                self.desenhar_nome_adversario(players[1][0])
                 status = self.jogo.obter_status()
                 self.atualizar_interface(status)
         else:
             messagebox.showinfo(message="Você já está em uma partida.")
 
     def receive_start(self, start_status) -> None:
-        local_player_id = start_status.get_local_id()
-        players = start_status.get_players()
-
+        self.jogo.receber_inicio()
         message = start_status.get_message()
         messagebox.showinfo(message=message)
-
-        self.jogo.receber_inicio()
+        players = start_status.get_players()
+        self.desenhar_nome_adversario(players[1][0])
         status = self.jogo.obter_status()
         self.atualizar_interface(status)
-        self.desenhar_nome_adversario(start_status.get_players()[1][0])
 
     def receive_move(self, a_move):
         self.jogo.receber_jogada(a_move)

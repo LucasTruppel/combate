@@ -134,3 +134,14 @@ class Tabuleiro:
             if not pecas_acabaram:
                 break
         return pecas_acabaram
+
+    def campo_esta_pronto(self) -> bool:
+        campo_pronto = True
+        for i in range(6, 10):
+            for j in range(10):
+                if self.matriz_posicoes[i][j].get_peca() is None:
+                    campo_pronto = False
+                    break
+            if not campo_pronto:
+                break
+        return campo_pronto

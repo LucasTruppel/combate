@@ -9,7 +9,6 @@ class Jogador:
         self.turno = False
         self.vencedor = False
         self.pecas_fora_tabuleiro = []
-        self.nome = ""
         self.posicao_selecionada = None
         self.posicoes_alcancaveis_posicao_selecionada = []
         self.peca_selecionada = None
@@ -56,14 +55,6 @@ class Jogador:
 
     def set_vencedor(self, eh_vencedor: bool) -> None:
         self.vencedor = eh_vencedor
-        
-    def pecas_fora_tabuleiro_vazio(self) -> bool:
-        if len(self.pecas_fora_tabuleiro) == 0:
-            return True
-        for linha in self.pecas_fora_tabuleiro:
-            if len(linha) > 0:
-                return False
-        return True
         
     def instanciar_pecas(self) -> None:
         self.pecas_fora_tabuleiro = [[] for _ in range(12)]

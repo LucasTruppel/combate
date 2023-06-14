@@ -206,7 +206,7 @@ class Jogo:
         
     def terminar_preparacao(self) -> dict:
         jogada = {}
-        if self.estado == Estado.PREPARACAO and self.jogador_local.pecas_fora_tabuleiro_vazio():
+        if self.estado == Estado.PREPARACAO and self.tabuleiro.campo_esta_pronto():
             self.exercito_enviado = True
             jogada["preparacao"] = True
             jogada["bandeira_capturada"] = False

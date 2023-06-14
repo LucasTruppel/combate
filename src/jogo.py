@@ -229,6 +229,7 @@ class Jogo:
                 self.iniciar_combate()
         elif bool(jogada["bandeira_capturada"]):
             self.atualizar_tabuleiro(jogada)
+            self.jogador_remoto.set_vencedor(True)
             self.finalizar()
         elif int(jogada["info_fim_pecas"]) != 0:
             self.atualizar_tabuleiro(jogada)

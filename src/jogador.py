@@ -55,6 +55,9 @@ class Jogador:
 
     def set_vencedor(self, eh_vencedor: bool) -> None:
         self.vencedor = eh_vencedor
+
+    def set_pecas_fora_tabuleiro(self, pecas_fora_tabuleiro: list) -> None:
+        self.pecas_fora_tabuleiro = pecas_fora_tabuleiro
         
     def instanciar_pecas(self) -> None:
         self.pecas_fora_tabuleiro = [[] for _ in range(12)]

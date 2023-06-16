@@ -134,10 +134,9 @@ class Jogo:
         jogada = {}
         peca_selecionada = self.jogador_local.get_peca_selecionada()
         posicao_origem = self.jogador_local.get_posicao_selecionada()
+        peca_origem = None
         if posicao_origem is not None:
             peca_origem = posicao_origem.get_peca()
-        else:
-            peca_origem = None
         posicao_destino = self.tabuleiro.get_posicao(linha, coluna)
         peca_destino = posicao_destino.get_peca()
 

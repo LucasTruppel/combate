@@ -321,10 +321,10 @@ class InterfaceGraficaJogador(DogPlayerInterface):
 
     def selecionar_posicao(self, linha: int, coluna: int, peca_fora_tabuleiro: bool) -> None:
         jogada = self.jogo.selecionar_posicao(linha, coluna, peca_fora_tabuleiro)
-        status = self.jogo.obter_status()
-        self.atualizar_interface(status)
         if jogada != {}:
             self.dog_server_interface.send_move(jogada)
+        status = self.jogo.obter_status()
+        self.atualizar_interface(status)
 
     def terminar_preparacao(self) -> None:
         estado = self.jogo.get_estado()

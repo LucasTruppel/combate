@@ -52,8 +52,9 @@ class Tabuleiro:
 
     def verificar_lances_possiveis(self, posicao: Posicao, jogador: Jogador) -> None:
         i_peca, j_peca = posicao.get_coordenada()
-        casas_por_movimento = posicao.get_peca().get_casas_por_movimento()
-        tipo_peca = posicao.get_peca().get_tipo()
+        peca = posicao.get_peca()
+        casas_por_movimento = peca.get_casas_por_movimento()
+        tipo_peca = peca.get_tipo()
         posicoes_alcancaveis = []
 
         # Cima

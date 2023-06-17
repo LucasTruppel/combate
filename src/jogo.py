@@ -66,6 +66,9 @@ class Jogo:
                     posicao.desocupar()
         self.jogador_local.reiniciar()
         self.jogador_remoto.reiniciar()
+        self.resetar()
+    
+    def resetar(self) -> None:
         self.exercito_adversario_recebido = False
         self.exercito_enviado = False
 

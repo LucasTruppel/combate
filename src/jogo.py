@@ -242,7 +242,7 @@ class Jogo:
 
     def iniciar_combate(self) -> None:
         self.estado = Estado.COMBATE
-        if not self.jogador_local.jogador2:
+        if not self.jogador_local.get_jogador2():
             self.jogador_local.inverter_turno()
         self.mensagem = "Combate iniciado!"
 

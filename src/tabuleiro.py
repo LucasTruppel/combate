@@ -39,7 +39,6 @@ class Tabuleiro:
             for peca in lista_pecas:
                 pecas.append(peca)
         shuffle(pecas)
-        pecas_fora_tabuleiro = [[] for _ in range(12)]
         for i in range(6, 10):
             for j in range(10):
                 posicao = self.matriz_posicoes[i][j]
@@ -48,6 +47,7 @@ class Tabuleiro:
                     posicao.set_ocupante(jogador)
                     posicao.set_peca(peca)
                     jogador.remover_peca_fora_tabuleiro(peca)
+        pecas_fora_tabuleiro = [[] for _ in range(12)]
         jogador.set_pecas_fora_tabuleiro(pecas_fora_tabuleiro)
 
     def verificar_lances_possiveis(self, posicao: Posicao, jogador: Jogador) -> None:

@@ -109,7 +109,7 @@ class Jogo:
     def selecionar_posicao(self, linha: int, coluna: int, peca_fora_tabuleiro: bool) -> dict:
         jogada = {}
         turno = self.jogador_local.get_turno()
-        if self.estado == Estado.PREPARACAO or (self.estado == Estado.COMBATE and turno):
+        if (self.estado == Estado.PREPARACAO and not self.exercito_enviado) or (self.estado == Estado.COMBATE and turno):
             posicao_selecionada = self.jogador_local.get_posicao_selecionada()
             peca_selecionada = self.jogador_local.get_peca_selecionada()
 
